@@ -6,8 +6,6 @@
     <title>Calculadora de Precios - AERO SERVICES Venezuela</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- html2pdf.js para generar PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -51,7 +49,7 @@
             object-fit: contain;
             border-radius: 0;
         }
-        /* Hide slogan by default on screen, it will be shown in footer for PDF */
+        /* Hide slogan by default on screen, it will be shown in footer for print */
         .slogan-on-screen {
             text-align: right;
             font-style: italic;
@@ -63,9 +61,9 @@
             font-weight: 700;
             color: #2c5282;
         }
-        /* Slogan for PDF, hidden by default on screen */
+        /* Slogan for print, hidden by default on screen */
         .slogan-for-print {
-            display: none; /* Hidden by default on screen, will be shown in PDF generation */
+            display: none; /* Hidden by default on screen */
             margin-top: 0.5rem; /* Space above copyright */
             font-style: italic;
             font-size: 0.9rem; /* Smaller for footer */
@@ -156,12 +154,10 @@
             align-items: flex-start;
             padding-left: 0.25rem;
         }
-        /* Removed SVG specific styles */
-        .notes-section ul li .bullet-icon {
+        .notes-section ul li svg {
             margin-right: 0.4rem;
             flex-shrink: 0;
             margin-top: 0;
-            color: #2c5282; /* Color for the bullet */
         }
         .notes-section ul li span {
             flex-grow: 1;
@@ -456,7 +452,7 @@
             transition: background-color 0.2s, transform 0.2s;
             margin-top: 1rem;
         }
-        .action-buttons button:hover {
+        #delayCalculationSection .print-button:hover {
             background-color: #2f855a;
             transform: translateY(-2px);
         }
@@ -520,176 +516,312 @@
             color: #4a5568;
         }
         .modal-buttons .cancel-button:hover {
-                background-color: #a0aec0;
+            background-color: #a0aec0;
         }
 
-        /* Styles for PDF generation (html2pdf.js uses these) */
-        /* These styles will be applied to the content when it's converted to PDF */
-        .pdf-content {
-            font-family: sans-serif; /* Changed to generic sans-serif */
-            color: #000; /* Ensure black text for PDF */
-            padding: 0.5in; /* Standard page margins */
-            background-color: #fff;
-            line-height: 1.2; /* Reduced line height */
-            font-size: 10pt; /* Standard font size for readability */
-        }
-        .pdf-header {
-            text-align: center;
-            margin-bottom: 0.4in; /* Increased margin for header */
-            padding-bottom: 0.1in;
-            border-bottom: 2px solid #2c5282;
-        }
-        .pdf-header h1 {
-            font-size: 16pt; /* Larger title */
-            font-weight: 700;
-            color: #000;
-            margin-bottom: 0.05in;
-        }
-        .pdf-header h2 {
-            font-size: 12pt;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 0.05in;
-        }
-        .pdf-header p {
-            font-size: 9pt;
-            color: #666;
-            margin-bottom: 0.05in;
-        }
-        .pdf-header span {
-            color: #000;
-        }
-        .pdf-section-title {
-            font-size: 13pt;
-            font-weight: 600;
-            color: #2c5282;
-            margin-top: 0.2in;
-            margin-bottom: 0.15in;
-            text-align: center;
-            padding-bottom: 0.05in;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .pdf-offer-section {
-            margin-top: 0.2in;
-            padding: 0.15in;
-            background-color: #f0fdf4;
-            border-radius: 6px;
-            border: 1px solid #d1fae5;
-            color: #000;
-        }
-        .pdf-offer-section p {
-            margin-bottom: 0.1in;
-            line-height: 1.3;
-            color: #000;
-        }
-        .pdf-input-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 0.05in;
-        }
-        .pdf-input-group label {
-            font-weight: 600;
-            color: #000;
-            flex-basis: 50%;
-            text-align: left;
-            font-size: 9pt;
-        }
-        .pdf-input-group span {
-            flex-basis: 45%;
-            text-align: right;
-            color: #000;
-            font-size: 9pt;
-        }
-        .pdf-budget-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 0.2in;
-            background-color: #fff;
-            border: 1px solid #e2e8f0;
-        }
-        .pdf-budget-table th, .pdf-budget-table td {
-            padding: 0.1in 0.12in;
-            text-align: left;
-            border: 1px solid #e2e8f0;
-            color: #000;
-            font-size: 9pt;
-        }
-        .pdf-budget-table th {
-            background-color: #f0f4f8;
-            font-weight: 700;
-        }
-        .pdf-budget-table .total-row td {
-            background-color: #e0f2fe;
-            font-weight: 700;
-            color: #000;
-            font-size: 10pt;
-        }
-        .pdf-budget-table td:nth-child(2),
-        .pdf-budget-table td:nth-child(3) {
-            text-align: right;
-        }
-        .pdf-budget-table .mora-note {
-            font-size: 8pt;
-            color: #000;
-            padding-top: 0.05in;
-            font-style: italic;
-            text-align: right;
-            border-top: 1px dashed #e2e8f0;
-        }
-        .pdf-notes-section {
-            margin-top: 0.2in;
-            padding-top: 0.1in;
-            border-top: 1px solid #e2e8f0;
-        }
-        .pdf-notes-section h2 {
-            font-size: 11pt;
-            font-weight: 600;
-            color: #2c5282;
-            margin-bottom: 0.1in;
-            text-align: center;
-        }
-        .pdf-notes-section ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .pdf-notes-section ul li {
-            margin-bottom: 0.05in;
-            color: #000;
-            line-height: 1.2;
-            display: flex;
-            align-items: flex-start;
-            font-size: 8pt;
-        }
-        .pdf-notes-section ul li .bullet-icon {
-            margin-right: 0.05in;
-            flex-shrink: 0;
-            width: 0.7em;
-            height: 0.7em;
-            fill: #000;
-            color: #2c5282; /* Color for the bullet in PDF */
-        }
-        .pdf-footer {
-            margin-top: 0.2in;
-            padding-top: 0.1in;
-            border-top: 1px solid #e2e8f0;
-            text-align: center;
-            font-size: 8pt;
-            color: #000;
-        }
-        .pdf-slogan {
-            margin-bottom: 0.05in;
-            font-style: italic;
-            color: #000;
-        }
-        .pdf-slogan strong {
-            font-weight: 700;
-            color: #000;
+        /* Print styles */
+        @media print {
+            body > * {
+                display: none !important; /* Hide everything by default */
+            }
+
+            /* This class will be added to the section we want to print */
+            .print-active-section {
+                display: block !important;
+                width: 100%;
+                max-width: 100%;
+                margin: 0 auto !important; /* Center horizontally for print */
+                padding: 0.5rem; /* Reduced padding for print */
+                box-shadow: none;
+                border: none;
+                background-color: white;
+                color: #000;
+            }
+
+            /* Hide elements not needed for the budget print, when main-calculator-page is active */
+            #main-calculator-page.print-active-section .admin-controls-container,
+            #main-calculator-page.print-active-section .action-buttons,
+            #main-calculator-page.print-active-section .contact-info p:not(.slogan-for-print p), /* Hide copyright, but not slogan within footer */
+            #main-calculator-page.print-active-section .input-group input[type="date"], /* Hide date inputs */
+            #main-calculator-page.print-active-section .input-group input[type="text"], /* Hide text inputs */
+            #main-calculator-page.print-active-section .input-group input[type="number"], /* Hide number inputs */
+            #main-calculator-page.print-active-section .input-group select, /* Hide select inputs */
+            #main-calculator-page.print-active-section .error-message,
+            #main-calculator-page.print-active-section .input-group .text-sm, /* Hide info texts below inputs */
+            #main-calculator-page.print-active-section .scenario-selection,
+            #main-calculator-page.print-active-section .section-title /* Hide main section title */
+            {
+                display: none !important;
+            }
+
+            /* Show the print-only header for the main budget */
+            #main-calculator-page.print-active-section .print-only-budget-header {
+                display: flex !important; /* Use flexbox for alignment */
+                justify-content: space-between; /* Space between logo and text */
+                align-items: flex-start; /* Align items to the top */
+                margin-bottom: 1rem; /* Reduced margin */
+                padding-bottom: 0.75rem; /* Reduced padding */
+                border-bottom: 2px solid #2c5282;
+            }
+            #main-calculator-page.print-active-section .print-only-budget-header .header-left {
+                flex-basis: 30%; /* Adjust width for logo */
+                text-align: left;
+            }
+            #main-calculator-page.print-active-section .print-only-budget-header .header-left img {
+                height: 70px; /* Smaller logo for print */
+                width: auto;
+            }
+            #main-calculator-page.print-active-section .print-only-budget-header .header-right {
+                flex-basis: 65%; /* Adjust width for text */
+                text-align: right;
+            }
+            #main-calculator-page.print-active-section .print-only-budget-header h1 {
+                font-size: 1.5rem; /* Reduced font size for header title */
+                font-weight: 700;
+                color: #000 !important;
+                margin-bottom: 0.3rem; /* Reduced margin */
+            }
+            #main-calculator-page.print-active-section .print-only-budget-header p {
+                font-size: 0.9rem; /* Reduced font size */
+                color: #000 !important;
+                margin-bottom: 0.15rem; /* Reduce space between paragraphs */
+            }
+            #main-calculator-page.print-active-section .print-only-budget-header span {
+                color: #000 !important;
+            }
+
+            /* Adjust the original header and slogan for print (hide them) */
+            #main-calculator-page.print-active-section .header,
+            #main-calculator-page.print-active-section .slogan-on-screen { /* Hide the screen version of slogan */
+                display: none !important;
+            }
+
+            /* Ensure offer section content is visible and styled correctly */
+            #main-calculator-page.print-active-section .offer-section {
+                background-color: white !important;
+                border: none !important;
+                box-shadow: none !important;
+                color: #000 !important;
+                padding: 0;
+                margin-top: 0;
+            }
+            #main-calculator-page.print-active-section .offer-section p {
+                color: #000 !important;
+                margin-bottom: 0.4rem; /* Reduced margin */
+            }
+            #main-calculator-page.print-active-section .offer-section .input-group {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: baseline;
+                margin-bottom: 0.2rem; /* Further reduced margin */
+            }
+            #main-calculator-page.print-active-section .offer-section .input-group label {
+                flex: 0 0 auto;
+                width: 45%; /* Adjust width for labels */
+                margin-right: 0.5rem;
+                text-align: left;
+                font-weight: 600;
+                color: #000 !important;
+                font-size: 0.9rem; /* Consistent font size */
+            }
+            #main-calculator-page.print-active-section .offer-section .input-group span { /* For displaying values */
+                flex: 0 0 auto;
+                width: 50%; /* Adjust width for values */
+                text-align: right;
+                color: #000 !important;
+                display: block !important; /* Show the span for printing */
+                font-size: 0.9rem; /* Consistent font size */
+            }
+            #main-calculator-page.print-active-section .offer-section .input-group input,
+            #main-calculator-page.print-active-section .input-group select { /* Hide inputs for printing */
+                display: none !important;
+            }
+            /* Show print spans for the main input groups */
+            #main-calculator-page.print-active-section .input-group #printHectares,
+            #main-calculator-page.print-active-section .input-group #printMixVolume,
+            #main-calculator-page.print-active-section .input-group #printFinancingMonths {
+                display: block !important;
+                width: 50%; /* Match the width of other print spans */
+                text-align: right;
+                color: #000 !important;
+                font-size: 0.9rem; /* Consistent font size */
+            }
+            /* Adjust labels for the main input groups to match offer section */
+            #main-calculator-page.print-active-section .input-group label {
+                width: 45%;
+                text-align: left;
+                font-weight: 600;
+                color: #000 !important;
+                font-size: 0.9rem; /* Consistent font size */
+            }
+
+
+            /* Ensure budget table is formal */
+            #main-calculator-page.print-active-section .budget-table {
+                background-color: white !important;
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+                margin-top: 0.75rem; /* Reduced margin */
+            }
+            #main-calculator-page.print-active-section .budget-table th,
+            #main-calculator-page.print-active-section .budget-table td {
+                color: #000 !important;
+                border: 1px solid #e2e8f0 !important; /* Ensure borders are visible */
+                background-color: white !important;
+                padding: 0.4rem 0.6rem; /* Reduced padding for table cells */
+                font-size: 0.9rem; /* Consistent font size for table body */
+            }
+            #main-calculator-page.print-active-section .budget-table th {
+                background-color: #f0f4f8 !important; /* Light grey for headers */
+            }
+            #main-calculator-page.print-active-section .budget-table .total-row td {
+                background-color: #e0f2fe !important; /* Light blue for total row */
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-size: 1rem; /* Slightly reduced for total row */
+            }
+            /* Align numeric columns to the right */
+            #main-calculator-page.print-active-section .budget-table td:nth-child(2),
+            #main-calculator-page.print-active-section .budget-table td:nth-child(3) {
+                text-align: right !important;
+            }
+            #main-calculator-page.print-active-section .budget-table .mora-note {
+                color: #000 !important;
+                border-top: 1px dashed #e2e8f0 !important;
+                font-size: 0.75rem; /* Further reduced font size */
+            }
+
+            /* Notes section for print */
+            #main-calculator-page.print-active-section .notes-section {
+                background-color: white !important;
+                border-top: 1px solid #e2e8f0 !important;
+                padding-top: 0.5rem; /* Reduced padding */
+                margin-top: 0.75rem; /* Reduced margin */
+            }
+            #main-calculator-page.print-active-section .notes-section h2 {
+                color: #000 !important;
+                text-align: center;
+                font-size: 1.1rem; /* Slightly reduced for print */
+            }
+            #main-calculator-page.print-active-section .notes-section ul li {
+                color: #000 !important;
+                font-size: 0.75rem; /* Smaller font size for considerations */
+                margin-bottom: 0.2rem; /* Reduced margin */
+            }
+            #main-calculator-page.print-active-section .notes-section ul li svg {
+                fill: #000 !important;
+                width: 0.8em; /* Smaller icon */
+                height: 0.8em; /* Smaller icon */
+            }
+
+            /* Slogan in footer for print */
+            .print-active-section .contact-info {
+                display: block !important; /* Ensure footer is visible */
+                text-align: center;
+                margin-top: 0.75rem; /* Reduced margin */
+                padding-top: 0.5rem; /* Reduced padding */
+                border-top: 1px solid #e2e8f0;
+            }
+            .print-active-section .slogan-for-print {
+                display: block !important; /* Show the slogan for print */
+                color: #000 !important; /* Ensure black text */
+                font-size: 0.8rem !important; /* Adjust font size for footer */
+                font-style: italic !important;
+                margin-bottom: 0.3rem; /* Reduced margin */
+            }
+            .print-active-section .slogan-for-print strong {
+                color: #000 !important;
+            }
+            .print-active-section .contact-info p {
+                font-size: 0.75rem !important; /* Consistent with slogan */
+            }
+
+
+            @page {
+                size: Letter;
+                margin: 0.5in;
+            }
+
+            /* Print styles for delay calculation section */
+            #history-page.print-active-section #delayCalculationSection {
+                display: block !important; /* Ensure it's visible if it's the target for printing */
+                width: 100%;
+                max-width: 100%;
+                margin: 0 auto !important; /* Center horizontally for print */
+                padding: 1rem;
+                box-shadow: none;
+                border: none;
+                background-color: white;
+                color: #000;
+            }
+            #history-page.print-active-section #delayCalculationSection .print-only-header {
+                display: block !important;
+            }
+            #history-page.print-active-section #delayCalculationSection h3,
+            #history-page.print-active-section #delayCalculationSection .input-group label,
+            #history-page.print-active-section #delayCalculationSection .input-group span,
+            #history-page.print-active-section #delayCalculationSection .result-box p,
+            #history-page.print-active-section #delayCalculationSection .result-box strong,
+            #history-page.print-active-section #delayCalculationSection .result-box span,
+            #history-page.print-active-section #delayCalculationSection .text-sm {
+                color: #000 !important;
+            }
+            #history-page.print-active-section #delayCalculationSection .result-box {
+                background-color: #f0f4f8 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                border: 1px solid #e2e8f0 !important;
+            }
+            #history-page.print-active-section #delayCalculationSection .result-box span {
+                background-color: transparent !important;
+            }
+            #history-page.print-active-section #delayCalculationSection .action-buttons {
+                display: none !important;
+            }
+            /* Hide other elements on history page when printing delay section */
+            #history-page.print-active-section #serviceHistoryList,
+            #history-page.print-active-section .action-buttons:not(#delayCalculationSection .action-buttons),
+            #history-page.print-active-section .section-title { /* Hide the "Historial de Servicios y Cálculo de Retrasos" title */
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="admin-panel" class="admin-controls-container">
+    <!-- Login/Register Page -->
+    <div id="auth-page" class="container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh;">
+        <h2 class="section-title">AERO SERVICES Venezuela</h2>
+        <div class="logo-section mb-8">
+            <div class="logo">
+                <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="AERO SERVICES Logo">
+            </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-6">Iniciar Sesión o Registrarse</h3>
+
+        <div class="w-full max-w-md">
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico:</label>
+                <input type="email" id="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="tu@ejemplo.com">
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Contraseña:</label>
+                <input type="password" id="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="********">
+            </div>
+            <div id="auth-error-message" class="text-red-500 text-sm mb-4" style="display: none;"></div>
+            <div class="flex items-center justify-between">
+                <button id="login-button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                    Iniciar Sesión
+                </button>
+                <button id="register-button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                    Registrarse
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel (hidden by default, shown after login) -->
+    <div id="admin-panel" class="admin-controls-container" style="display: none;">
         <h2 class="admin-title">Configuración de Precios y Tasas (Solo para Edición)</h2>
         <div class="admin-input-group">
             <label for="adminBase15">Precio Base 15 Lts/Ha (€):</label>
@@ -727,45 +859,10 @@
                 <input type="radio" name="scenario" value="cosecha" onchange="handleScenarioChange()"> Pago a Final de Cosecha
             </label>
         </div>
-        <!-- Display User ID and Email for debugging -->
-        <div class="text-sm text-gray-600 mt-2 text-center">
-            <span id="userIdDisplay">ID de Usuario: Cargando...</span>
-            <span id="userEmailDisplay" class="block">Email: No Autenticado</span>
-        </div>
-        <!-- New section for Export/Import and Logout -->
-        <div class="action-buttons mt-4">
-            <button onclick="exportData()">Exportar Historial</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
-            <button onclick="document.getElementById('importFile').click()">Importar Historial</button>
-            <button id="logoutButton" onclick="logoutUser()" style="display: none;">Cerrar Sesión</button>
-        </div>
     </div>
 
-    <!-- Authentication Page -->
-    <div id="auth-page" class="container" style="display: none;">
-        <h2 class="section-title">Acceso a AERO SERVICES Venezuela</h2>
-        <p class="text-center text-lg font-semibold text-gray-700 mb-6">Inicia Sesión o Regístrate para Sincronizar tu Historial</p>
-
-        <div class="input-group">
-            <label for="authEmail">Correo Electrónico:</label>
-            <input type="email" id="authEmail" placeholder="tu@ejemplo.com">
-        </div>
-        <div class="input-group">
-            <label for="authPassword">Contraseña:</label>
-            <input type="password" id="authPassword" placeholder="••••••••">
-        </div>
-
-        <div class="action-buttons mt-6">
-            <button onclick="loginUser()">Iniciar Sesión</button>
-            <button onclick="signupUser()">Registrarse</button>
-        </div>
-        <p class="text-center text-sm text-gray-500 mt-4">
-            Al registrarte o iniciar sesión, tu historial de servicios se sincronizará automáticamente entre tus dispositivos.
-        </p>
-    </div>
-
-    <!-- Main Calculator Page -->
-    <div id="main-calculator-page" class="container">
+    <!-- Main Calculator Page (hidden by default, shown after login) -->
+    <div id="main-calculator-page" class="container" style="display: none;">
         <header class="header">
             <div class="logo-section">
                 <!-- Logo de AERO SERVICES Venezuela -->
@@ -782,6 +879,17 @@
                 <p><strong>Gestionamos Calidad!</strong></p>
             </div>
         </header>
+
+        <!-- New Print-Only Header for Budget -->
+        <div class="print-only-budget-header" style="display: none;">
+            <div class="header-left">
+                <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="AERO SERVICES Logo">
+            </div>
+            <div class="header-right">
+                <h1>Presupuesto de Servicios Aéreos con Drone</h1>
+                <p>Fecha de Emisión: <span id="budgetIssueDatePrint"></span></p>
+            </div>
+        </div>
 
         <h2 class="section-title">Inversión en Servicios Aéreos con Drone</h2>
         <p class="text-center text-lg font-semibold text-gray-700 mb-6">Presupuesto por Hectárea (Ha.)</p>
@@ -841,27 +949,37 @@
             <!-- La tabla de resultados se generará aquí -->
         </div>
 
-        <div class="notes-section" id="notes-section">
+        <div class="notes-section">
             <h2>Consideraciones Importantes:</h2>
             <ul>
                 <li>
-                    <span class="bullet-icon">✅</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 0 0-1.146-1.047l-3.232 3.535-1.992-1.807a.75.75 0 0 0-1.112 1.04l2.62 2.507a.75.75 0 0 0 1.112 0l3.975-4.358Z" clip-rule="evenodd" />
+                    </svg>
                     <span>El precio base por hectárea varía según el volumen de mezcla seleccionado.</span>
                 </li>
                 <li>
-                    <span class="bullet-icon">✅</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 0 0-1.146-1.047l-3.232 3.535-1.992-1.807a.75.75 0 0 0-1.112 1.04l2.62 2.507a.75.75 0 0 0 1.112 0l3.975-4.358Z" clip-rule="evenodd" />
+                    </svg>
                     <span>Suministramos la <strong>Nivelación del pH</strong> en el costo de nuestros servicios.</span>
                 </li>
                 <li>
-                    <span class="bullet-icon">✅</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 0 0-1.146-1.047l-3.232 3.535-1.992-1.807a.75.75 0 0 0-1.112 1.04l2.62 2.507a.75.75 0 0 0 1.112 0l3.975-4.358Z" clip-rule="evenodd" />
+                    </svg>
                     <span>Nuestros precios <strong>no incluyen IVA</strong>.</span>
                 </li>
                 <li>
-                    <span class="bullet-icon">✅</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 0 0-1.146-1.047l-3.232 3.535-1.992-1.807a.75.75 0 0 0-1.112 1.04l2.62 2.507a.75.75 0 0 0 1.112 0l3.975-4.358Z" clip-rule="evenodd" />
+                    </svg>
                     <span>Montos aplican para el pago €. En Bolívares, el monto de divisas a cancelar se regirá por la <strong>tasa</strong> del Euro (€) emitida por el Banco Central de Venezuela (BCV) para la fecha del pago.</span>
                 </li>
                 <li>
-                    <span class="bullet-icon">✅</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 0 0-1.146-1.047l-3.232 3.535-1.992-1.807a.75.75 0 0 0-1.112 1.04l2.62 2.507a.75.75 0 0 0 1.112 0l3.975-4.358Z" clip-rule="evenodd" />
+                    </svg>
                     <span>Remita el comprobante de pago a <strong>nuestra</strong> línea de atención al cliente <strong>(0424) 405-4139 vía WhatsApp</strong> y a nuestro email: <strong>aeroservices.vzla@gmail.com</strong> a fin de hacerle llegar su estatus de cuenta.</span>
                 </li>
             </ul>
@@ -870,20 +988,22 @@
         <div class="action-buttons">
             <button onclick="saveService()">Guardar Servicio</button>
             <button onclick="showHistoryPage()">Ver Historial de Servicios</button>
-            <button onclick="generateBudgetPDF()">Descargar Presupuesto PDF</button> <!-- Changed button text and function -->
+            <button onclick="printBudgetReport()">Imprimir Presupuesto</button> <!-- New print button for budget -->
+            <button onclick="signOutUser()">Cerrar Sesión</button>
         </div>
 
         <footer class="contact-info">
-            <div class="slogan-for-print"> <!-- Slogan for PDF display -->
+            <div class="slogan-for-print"> <!-- Slogan for print display -->
                 <p>No fumigamos</p>
                 <p><strong>Gestionamos Calidad!</strong></p>
             </div>
             <p>&copy; 2025 AERO SERVICES Venezuela. Todos los derechos reservados.</p>
+            <p id="userIdDisplay" class="text-sm text-gray-400 mt-2"></p>
         </footer>
     </div>
 
     <!-- History Page -->
-    <div id="history-page" class="container">
+    <div id="history-page" class="container" style="display: none;">
         <h2 class="section-title">Historial de Servicios y Cálculo de Retrasos</h2>
         <div id="serviceHistoryList" class="history-list">
             <p class="text-center text-gray-500">Cargando historial de servicios...</p>
@@ -921,7 +1041,7 @@
             </div>
             <div class="input-group">
                 <label for="actualPaymentDate">Fecha Real de Pago:</label>
-                <input type="date" id="actualPaymentDate" onchange="calculateDelayInterest(this.value)">
+                <input type="date" id="actualPaymentDate" onchange="calculateDelayInterest()">
             </div>
             <div id="delayCalculationResults" class="result-box" style="display: none;">
                 <p>Meses de Retraso Calculados: <span id="calculatedDelayMonths"></span></p>
@@ -932,7 +1052,7 @@
                 <p class="text-sm mt-2" id="delayNote">Nota: Se está efectuando un cálculo por retraso de <span id="delayDaysCount"></span> días desde la fecha convenida de pago inicialmente al financiamiento.</p>
             </div>
             <div class="action-buttons mt-4">
-                <button onclick="generateDelayReportPDF()" id="printReportButton" style="display: none;">Descargar Reporte PDF</button>
+                <button onclick="printDelayReport()" id="printReportButton" style="display: none;">Imprimir Reporte</button>
             </div>
         </div>
 
@@ -956,7 +1076,7 @@
     <script type="module">
         // Firebase SDK imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, getDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         // Global Firebase variables
@@ -964,32 +1084,31 @@
         window.db = null;
         window.auth = null;
         window.userId = null;
-        window.userEmail = "No Autenticado"; // New global for user email
         let firebaseInitialized = false;
 
-        // Definición de precios base por hectárea según el volumen de mezcla
+        // Base prices per hectare based on mix volume
         let BASE_PRICES_BY_MIX_VOLUME = {
-            '15': 18.00, // Euros por Hectárea para 15 Lts/Ha
-            '20': 19.50, // Euros por Hectárea para 20 Lts/Ha
-            '25': 21.20  // Euros por Hectárea para 25 Lts/Ha
+            '15': 18.00, // Euros per Hectare for 15 Lts/Ha
+            '20': 19.50, // Euros per Hectare for 20 Lts/Ha
+            '25': 21.20  // Euros per Hectare for 25 Lts/Ha
         };
 
-        // Tasas de interés estandarizadas (anuales en porcentaje)
-        let STANDARD_COMMERCIAL_INTEREST_RATE = 36; // 36% anual para financiamiento con abono
-        let STANDARD_HIGH_INTEREST_RATE = 60;     // 60% anual para pago a final de cosecha
-        let DELAY_INTEREST_RATE = 24; // 24% anual por retraso
+        // Standardized annual interest rates (percentage)
+        let STANDARD_COMMERCIAL_INTEREST_RATE = 36; // 36% annual for financing with down payment
+        let STANDARD_HIGH_INTEREST_RATE = 60;     // 60% annual for payment at harvest end
+        let DELAY_INTEREST_RATE = 24; // 24% annual for delay
 
-        const FINANCING_PERCENTAGE = 0.55; // 55% del costo se financia
-        const INITIAL_DEPOSIT_PERCENTAGE = 0.45; // 45% de abono inicial
+        const FINANCING_PERCENTAGE = 0.55; // 55% of the cost is financed
+        const INITIAL_DEPOSIT_PERCENTAGE = 0.45; // 45% initial deposit
 
         let currentSelectedService = null; // To hold the service data when calculating delay
 
-        // Función para formatear la moneda (siempre en EUR)
+        // Function to format currency (always in EUR)
         function formatCurrency(value) {
             return `€ ${value.toFixed(2).replace('.', ',')}`;
         }
 
-        // Función para formatear fechas a dd/mm/aaaa
+        // Function to format dates to dd/mm/yyyy
         function formatDateToDDMMYYYY(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString);
@@ -998,11 +1117,11 @@
             const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
             const year = date.getFullYear();
-            return `${day}/${month}/${year}`; // Return in DD/MM/YYYY for display
+            return `${day}/${month}/${year}`;
         }
         window.formatDateToDDMMYYYY = formatDateToDDMMYYYY; // Expose to global scope
 
-        // Función para cargar los valores desde localStorage
+        // Function to load values from localStorage
         function loadValuesFromLocalStorage() {
             const storedPrices = localStorage.getItem('BASE_PRICES_BY_MIX_VOLUME');
             const storedCommercialRate = localStorage.getItem('STANDARD_COMMERCIAL_INTEREST_RATE');
@@ -1023,7 +1142,7 @@
             }
         }
 
-        // Función para guardar los valores en localStorage
+        // Function to save values to localStorage
         function saveValuesToLocalStorage() {
             localStorage.setItem('BASE_PRICES_BY_MIX_VOLUME', JSON.stringify(BASE_PRICES_BY_MIX_VOLUME));
             localStorage.setItem('STANDARD_COMMERCIAL_INTEREST_RATE', STANDARD_COMMERCIAL_INTEREST_RATE);
@@ -1031,7 +1150,7 @@
             localStorage.setItem('DELAY_INTEREST_RATE', DELAY_INTEREST_RATE);
         }
 
-        // Función para poblar los campos de administración con los valores actuales
+        // Function to populate admin inputs with current values
         function populateAdminInputs() {
             document.getElementById('adminBase15').value = BASE_PRICES_BY_MIX_VOLUME['15'];
             document.getElementById('adminBase20').value = BASE_PRICES_BY_MIX_VOLUME['20'];
@@ -1041,7 +1160,7 @@
             document.getElementById('adminDelayInterestRate').value = DELAY_INTEREST_RATE;
         }
 
-        // Función para actualizar los valores desde los campos de administración
+        // Function to update values from admin inputs
         function updateAdminValues() {
             BASE_PRICES_BY_MIX_VOLUME['15'] = parseFloat(document.getElementById('adminBase15').value) || BASE_PRICES_BY_MIX_VOLUME['15'];
             BASE_PRICES_BY_MIX_VOLUME['20'] = parseFloat(document.getElementById('adminBase20').value) || BASE_PRICES_BY_MIX_VOLUME['20'];
@@ -1056,7 +1175,8 @@
         // Expose function to global scope
         window.updateAdminValues = updateAdminValues;
 
-        // Función para calcular los meses entre dos fechas
+
+        // Function to calculate months between two dates
         function calculateMonthsBetweenDates(startDateStr, endDateStr) {
             const startDate = new Date(startDateStr);
             const endDate = new Date(endDateStr);
@@ -1070,11 +1190,11 @@
             // Convert milliseconds to days
             const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-            // Convert days to months using the average number of days in a month (30.4375 days)
+            // Convert days to months using the average number of days in a month (365.25 / 12)
             return diffDays / 30.4375;
         }
 
-        // Función para actualizar el campo de meses de financiamiento basado en las fechas
+        // Function to update financing months field based on dates
         function updateFinancingMonthsBasedOnDates() {
             const serviceDate = document.getElementById('serviceDate').value;
             const estimatedPaymentDate = document.getElementById('estimatedPaymentDate').value;
@@ -1100,7 +1220,7 @@
         window.updateFinancingMonthsBasedOnDates = updateFinancingMonthsBasedOnDates;
 
 
-        // Función principal de cálculo de costos
+        // Main cost calculation function
         function calculateCosts() {
             const hectares = parseFloat(document.getElementById('hectares').value);
             const mixVolume = document.getElementById('mixVolume').value;
@@ -1132,18 +1252,18 @@
             const monthlyCommercialRate = (STANDARD_COMMERCIAL_INTEREST_RATE / 100) / 12;
             const monthlyHighRate = (STANDARD_HIGH_INTEREST_RATE / 100) / 12;
 
-            // --- Escenario 1: Pago de Contado ---
+            // --- Scenario 1: Cash Payment ---
             const totalContado = basePricePerHa * hectares;
 
-            // --- Escenario 2: Financiamiento (Abono 45%) ---
+            // --- Scenario 2: Financing (45% Down Payment) ---
             const totalServiceBaseForFinancing = basePricePerHa * hectares;
             const initialDepositAmount = totalServiceBaseForFinancing * INITIAL_DEPOSIT_PERCENTAGE;
             // Use the calculated financingMonths for future value calculation
             const amountToFinance = totalServiceBaseForFinancing * FINANCING_PERCENTAGE;
             const futureValueFinanciamiento = amountToFinance * Math.pow((1 + monthlyCommercialRate), financingMonths);
-            const totalFinanciamientoScenario = initialDepositAmount + futureValueFinanciamiento; // Total pagado en este escenario
+            const totalFinanciamientoScenario = initialDepositAmount + futureValueFinanciamiento; // Total paid in this scenario
 
-            // --- Escenario 3: Pago a Final de Cosecha ---
+            // --- Scenario 3: Payment at Harvest End ---
             const totalServiceBaseForCosecha = basePricePerHa * hectares;
             // Use the calculated financingMonths for future value calculation
             const futureValueCosecha = totalServiceBaseForCosecha * Math.pow((1 + monthlyHighRate), financingMonths);
@@ -1164,7 +1284,7 @@
         window.calculateCosts = calculateCosts;
 
 
-        // Función para mostrar solo el escenario seleccionado en formato de tabla
+        // Function to display only the selected scenario in table format
         function displaySelectedScenario() {
             const calculatedData = calculateCosts();
             const resultsTableContainer = document.getElementById('resultsTableContainer');
@@ -1203,12 +1323,12 @@
                     </tr>
                 `;
             } else if (selectedScenario === 'financiamiento') {
-                // Costo por hectárea para el abono inicial
+                // Cost per hectare for the initial deposit
                 const initialDepositPerHa = basePricePerHa * INITIAL_DEPOSIT_PERCENTAGE;
-                // Costo por hectárea para el pago final financiado (incluyendo intereses)
+                // Cost per hectare for the final financed payment (including interest)
                 // Ensure futureValueFinanciamiento is a number before division
                 const financedPaymentPerHa = (futureValueFinanciamiento && hectares) ? futureValueFinanciamiento / hectares : 0;
-                // Suma de los costos por hectárea para el resumen
+                // Sum of costs per hectare for the summary
                 const totalCostPerHaFinanced = initialDepositPerHa + financedPaymentPerHa;
 
 
@@ -1237,7 +1357,7 @@
                 `;
 
             } else if (selectedScenario === 'cosecha') {
-                // Costo por hectárea para el pago a final de cosecha (incluyendo intereses)
+                // Cost per hectare for payment at harvest end (including interest)
                 // Ensure futureValueCosecha is a number before division
                 const totalCosechaPerHa = (futureValueCosecha && hectares) ? futureValueCosecha / hectares : 0;
 
@@ -1267,7 +1387,7 @@
             `;
             resultsTableContainer.innerHTML = tableHtml;
 
-            // Update print-only spans and header date with dd/mm/aaaa format
+            // Update print-only spans and header date with dd/mm/yyyy format
             document.getElementById('printClientName').textContent = document.getElementById('clientName').value;
             document.getElementById('printClientId').textContent = document.getElementById('clientId').value;
             document.getElementById('printServiceDate').textContent = formatDateToDDMMYYYY(document.getElementById('serviceDate').value);
@@ -1275,6 +1395,7 @@
             document.getElementById('printHectares').textContent = document.getElementById('hectares').value;
             document.getElementById('printMixVolume').textContent = document.getElementById('mixVolume').value;
             document.getElementById('printFinancingMonths').textContent = document.getElementById('financingMonths').value;
+            document.getElementById('budgetIssueDatePrint').textContent = formatDateToDDMMYYYY(new Date().toISOString().slice(0,10)); // Current date
         }
         // Expose function to global scope
         window.displaySelectedScenario = displaySelectedScenario;
@@ -1339,7 +1460,7 @@
                 amountDueForPayment = calculatedData.futureValueFinanciamiento; // Only the financed portion
                 initialPaymentMade = calculatedData.initialDepositAmount; // Initial deposit for financing
             } else if (selectedScenario === 'cosecha') {
-                totalAmountToPay = calculatedData.futureValueCosecha; // This should be calculatedData.futureValueCosecha
+                totalAmountToPay = calculatedData.futureValueCosecha;
                 amountDueForPayment = calculatedData.futureValueCosecha; // Full amount for harvest
                 initialPaymentMade = 0; // No initial payment for harvest
             }
@@ -1360,6 +1481,7 @@
             };
 
             try {
+                // Determine appId based on whether running in Canvas or locally with user config
                 const currentAppId = window.firebaseApp ? window.firebaseApp.options.projectId : 'default-fumigation-app-id';
                 console.log("Attempting to save service for userId:", window.userId, "in appId:", currentAppId);
                 const docRef = await addDoc(collection(window.db, `artifacts/${currentAppId}/users/${window.userId}/serviceRecords`), serviceRecord);
@@ -1534,419 +1656,87 @@
         // Expose function to global scope
         window.calculateDelayInterest = calculateDelayInterest;
 
-        // Function to generate the Delay Report PDF
-        function generateDelayReportPDF() {
-            console.log("generateDelayReportPDF function called.");
-            if (!currentSelectedService) {
-                showCustomMessage("No hay un servicio seleccionado para generar el reporte de retraso.");
-                console.error("No currentSelectedService for delay report.");
-                return;
-            }
+        // Function to print the delay report
+        function printDelayReport() {
+            // Set the current date for the report print header
+            document.getElementById('reportIssueDatePrint').textContent = formatDateToDDMMYYYY(new Date().toISOString().slice(0,10));
 
-            // Get current calculation results from displayed elements
-            const actualPaymentDate = document.getElementById('actualPaymentDate').value;
-            const calculatedDelayMonths = document.getElementById('calculatedDelayMonths').textContent;
-            const additionalInterestAmount = document.getElementById('additionalInterestAmount').textContent;
-            const newTotalWithDelay = document.getElementById('newTotalWithDelay').textContent;
-            const newPricePerHectareWithDelay = document.getElementById('newPricePerHectareWithDelay').textContent;
-            const delayDaysCount = document.getElementById('delayDaysCount').textContent;
+            // Hide all sections first
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('main-calculator-page').style.display = 'none';
+            document.getElementById('history-page').style.display = 'block'; // Ensure history page is visible for its child to print
 
-            // Create a temporary div to construct the PDF content with proper styling
-            const pdfContentDiv = document.createElement('div');
-            pdfContentDiv.className = 'pdf-content'; // Apply the general PDF styles
-            console.log("pdfContentDiv for delay report created with class 'pdf-content'.");
+            // Remove print-active-section from all potential print containers first
+            document.getElementById('main-calculator-page').classList.remove('print-active-section');
+            document.getElementById('history-page').classList.remove('print-active-section');
 
-            // Add header with company name and RIF instead of logo
-            pdfContentDiv.innerHTML += `
-                <div class="pdf-header">
-                    <h1>Reporte de Cálculo de Retraso de Pago</h1>
-                    <h2>AERO SERVICES Venezuela</h2>
-                    <p>RIF: J-40916035-0</p>
-                    <p>Fecha de Emisión: <span>${formatDateToDDMMYYYY(new Date().toISOString().slice(0,10))}</span></p>
-                </div>
-            `;
-            console.log("Delay report header added with company name and RIF.");
+            // Add print-active-section to the desired print container (history-page, as delay section is inside it)
+            document.getElementById('history-page').classList.add('print-active-section');
 
-            // Add service info
-            pdfContentDiv.innerHTML += `<h2 class="pdf-section-title">Información del Cliente y Servicio</h2>`;
-            pdfContentDiv.innerHTML += `
-                <div class="pdf-input-group">
-                    <label>Nombre del Cliente:</label>
-                    <span>${currentSelectedService.clientName}</span>
-                </div>
-                <div class="pdf-input-group">
-                    <label>Número de Cédula/RIF:</label>
-                    <span>${currentSelectedService.clientId}</span>
-                </div>
-                <div class="pdf-input-group">
-                    <label>Fecha de Prestación del Servicio:</label>
-                    <span>${formatDateToDDMMYYYY(currentSelectedService.serviceDate)}</span>
-                </div>
-                <div class="pdf-input-group">
-                    <label>Fecha Estimada de Pago:</label>
-                    <span>${formatDateToDDMMYYYY(currentSelectedService.estimatedPaymentDate)}</span>
-                </div>
-                <div class="pdf-input-group">
-                    <label>Monto Original Adeudado:</label>
-                    <span>${formatCurrency(currentSelectedService.amountDueForPayment)}</span>
-                </div>
-            `;
-            console.log("Delay report service info added.");
+            window.print(); // Trigger the print dialog
 
-            // Add delay calculation results
-            pdfContentDiv.innerHTML += `<h2 class="pdf-section-title">Detalle del Cálculo por Retraso</h2>`;
-            pdfContentDiv.innerHTML += `
-                <div style="background-color: #f0f4f8; padding: 0.15in; border-radius: 6px; margin-top: 0.15in; border: 1px solid #e2e8f0;">
-                    <p style="margin-bottom: 0.1in; font-size: 10pt; color: #000;">Fecha Real de Pago: <span style="font-weight: 700; color: #000;">${formatDateToDDMMYYYY(actualPaymentDate)}</span></p>
-                    <p style="margin-bottom: 0.1in; font-size: 10pt; color: #000;">Meses de Retraso Calculados: <span style="font-weight: 700; color: #000;">${calculatedDelayMonths}</span></p>
-                    <p style="margin-bottom: 0.1in; font-size: 10pt; color: #000;">Interés Adicional por Retraso: <span style="font-weight: 700; color: #000;">${additionalInterestAmount}</span></p>
-                    <p style="margin-bottom: 0.1in; font-size: 10pt; color: #000;"><strong>Nuevo Monto Total Adeudado con Retraso: <span style="font-weight: 700; color: #000;">${newTotalWithDelay}</span></strong></p>
-                    <p style="margin-bottom: 0.1in; font-size: 10pt; color: #000;"><strong>Costo por Hectárea con Retraso (Total): <span style="font-weight: 700; color: #000;">${newPricePerHectareWithDelay}</span></strong></p>
-                    <p style="font-size: 9pt; color: #000; margin-top: 0.15in; text-align: justify; padding-top: 0.1in; border-top: 1px dashed #e2e8f0;">Nota: Se está efectuando un cálculo por retraso de <span style="font-weight: 700; color: #000;">${delayDaysCount}</span> días desde la fecha convenida de pago inicialmente al financiamiento.</p>
-                </div>
-            `;
-            console.log("Delay report calculation results added.");
-
-            // Add footer
-            pdfContentDiv.innerHTML += `
-                <div class="pdf-footer">
-                    <div class="pdf-slogan">
-                        <p>No fumigamos</p>
-                        <p><strong>Gestionamos Calidad!</strong></p>
-                    </div>
-                    <p>&copy; 2025 AERO SERVICES Venezuela. Todos los derechos reservados.</p>
-                </div>
-            `;
-            console.log("PDF footer added.");
-
-            console.log("HTML content for Delay Report PDF:", pdfContentDiv.outerHTML); // Log the HTML content for debugging
-
-            // Set up html2pdf options
-            const options = {
-                margin: 0.5, // Margins in inches
-                filename: `Reporte_Retraso_${currentSelectedService.clientName.replace(/\s/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
-                    scale: 3, // Increased scale for better resolution
-                    logging: true,
-                    dpi: 300, // Increased DPI
-                    letterRendering: true,
-                    useCORS: true, // Added for cross-origin images
-                    allowTaint: true // Added as fallback for cross-origin images
-                },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            console.log("html2pdf options for delay report set.");
-
-            // Generate PDF
-            try {
-                showCustomMessage("Generando PDF del reporte de retraso... Por favor, espera.");
-                html2pdf().from(pdfContentDiv).set(options).save().then(() => {
-                    console.log("Delay report PDF generated and saved successfully.");
-                    hideConfirmModal();
-                }).catch(error => {
-                    console.error("Error during delay report PDF generation:", error);
-                    showCustomMessage("Error al generar el PDF del reporte de retraso: " + error.message);
-                    hideConfirmModal();
-                });
-            } catch (error) {
-                console.error("Error calling html2pdf for delay report:", error);
-                showCustomMessage("Error inesperado al iniciar la generación del PDF del reporte de retraso: " + error.message);
-                hideConfirmModal();
-            }
+            // Clean up: restore original display
+            document.getElementById('history-page').classList.remove('print-active-section');
+            showHistoryPage(); // Return to history page view
         }
-        window.generateDelayReportPDF = generateDelayReportPDF;
+        window.printDelayReport = printDelayReport;
+
+        // New function to print the budget report
+        function printBudgetReport() {
+            // Set the current date for the budget print header
+            document.getElementById('budgetIssueDatePrint').textContent = formatDateToDDMMYYYY(new Date().toISOString().slice(0,10));
+
+            // Hide all sections first
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('history-page').style.display = 'none';
+            document.getElementById('main-calculator-page').style.display = 'block'; // Ensure main calculator page is visible for printing
+
+            // Remove print-active-section from all potential print containers first
+            document.getElementById('main-calculator-page').classList.remove('print-active-section');
+            document.getElementById('history-page').classList.remove('print-active-section');
+
+            // Add print-active-section to the desired print container
+            document.getElementById('main-calculator-page').classList.add('print-active-section');
+
+            // Set the values for the print-only spans in the offer section
+            document.getElementById('printClientName').textContent = document.getElementById('clientName').value;
+            document.getElementById('printClientId').textContent = document.getElementById('clientId').value;
+            document.getElementById('printServiceDate').textContent = formatDateToDDMMYYYY(document.getElementById('serviceDate').value);
+            document.getElementById('printEstimatedPaymentDate').textContent = formatDateToDDMMYYYY(document.getElementById('estimatedPaymentDate').value);
+            document.getElementById('printHectares').textContent = document.getElementById('hectares').value;
+            document.getElementById('printMixVolume').textContent = document.getElementById('mixVolume').value;
+            document.getElementById('printFinancingMonths').textContent = document.getElementById('financingMonths').value;
 
 
-        // Function to generate the Budget Report PDF
-        function generateBudgetPDF() {
-            console.log("generateBudgetPDF function called.");
+            window.print(); // Trigger the print dialog
 
-            const clientName = document.getElementById('clientName').value;
-            const clientId = document.getElementById('clientId').value;
-            const serviceDate = document.getElementById('serviceDate').value;
-            const estimatedPaymentDate = document.getElementById('estimatedPaymentDate').value;
-            const hectares = document.getElementById('hectares').value;
-            const mixVolume = document.getElementById('mixVolume').value;
-            const financingMonths = document.getElementById('financingMonths').value;
-
-            if (!clientName || !clientId || !serviceDate || !estimatedPaymentDate || !hectares || !mixVolume) {
-                showCustomMessage("Por favor, completa todos los campos de la oferta y realiza un cálculo antes de generar el PDF.");
-                console.error("Missing required data for budget PDF.");
-                return;
-            }
-
-            const calculatedData = calculateCosts();
-            if (Object.keys(calculatedData).length === 0) {
-                showCustomMessage("Por favor, realiza un cálculo válido antes de generar el PDF del presupuesto.");
-                console.error("Invalid calculated data for budget PDF.");
-                return;
-            }
-            const { totalContado, initialDepositAmount, futureValueFinanciamiento, totalFinanciamientoScenario, futureValueCosecha } = calculatedData;
-            const selectedScenario = document.querySelector('input[name="scenario"]:checked').value;
-
-
-            // Create a temporary div to construct the PDF content with inline styling
-            const pdfContentDiv = document.createElement('div');
-            pdfContentDiv.className = 'pdf-content'; // Apply the general PDF styles
-            console.log("pdfContentDiv created with class 'pdf-content'.");
-
-            // Add header for PDF with company name and RIF instead of logo
-            pdfContentDiv.innerHTML += `
-                <div class="pdf-header">
-                    <h1>Presupuesto de Servicios Aéreos con Drone</h1>
-                    <h2>AERO SERVICES Venezuela</h2>
-                    <p>RIF: J-40916035-0</p>
-                    <p>Fecha de Emisión: <span>${formatDateToDDMMYYYY(new Date().toISOString().slice(0,10))}</span></p>
-                </div>
-            `;
-            console.log("PDF header added with company name and RIF.");
-
-            // Add main section title
-            pdfContentDiv.innerHTML += `<h2 class="pdf-section-title">Inversión en Servicios Aéreos con Drone</h2>`;
-            pdfContentDiv.innerHTML += `<p style="text-align: center; font-size: 10pt; color: #000; margin-bottom: 0.15in;">Presupuesto por Hectárea (Ha.)</p>`;
-            console.log("Main section title and subtitle added.");
-
-            // Add offer section
-            pdfContentDiv.innerHTML += `
-                <div class="pdf-offer-section">
-                    <p style="margin-bottom: 0.1in; line-height: 1.3;">Por medio del presente, <strong>AERO SERVICES Venezuela</strong> hace entrega de la oferta de servicios de fumigación con las siguientes condiciones:</p>
-                    <div class="pdf-input-group">
-                        <label>Nombre del Cliente:</label>
-                        <span>${clientName}</span>
-                    </div>
-                    <div class="pdf-input-group">
-                        <label>Número de Cédula/RIF:</label>
-                        <span>${clientId}</span>
-                    </div>
-                    <div class="pdf-input-group">
-                        <label>Fecha de Prestación del Servicio:</label>
-                        <span>${formatDateToDDMMYYYY(serviceDate)}</span>
-                    </div>
-                    <div class="pdf-input-group">
-                        <label>Fecha Estimada de Pago del Servicio:</label>
-                        <span>${formatDateToDDMMYYYY(estimatedPaymentDate)}</span>
-                    </div>
-                </div>
-            `;
-            console.log("Offer section added with dynamic data.");
-
-            // Add main input values
-            pdfContentDiv.innerHTML += `
-                <div class="pdf-input-group" style="margin-top: 0.15in;">
-                    <label>Hectáreas a Fumigar:</label>
-                    <span>${hectares}</span>
-                </div>
-                <div class="pdf-input-group">
-                    <label>Volumen de Mezcla (Lts/Ha):</label>
-                    <span>${mixVolume} Lts/Ha</span>
-                </div>
-                <div class="pdf-input-group">
-                    <label>Meses para el Pago:</label>
-                    <span>${financingMonths}</span>
-                </div>
-            `;
-            console.log("Main input values added.");
-
-            // Construct the budget table HTML directly
-            let tableHtml = `
-                <table class="pdf-budget-table">
-                    <thead>
-                        <tr>
-                            <th>Descripción</th>
-                            <th style="text-align: right;">P. Unt. Ha.</th>
-                            <th style="text-align: right;">Monto Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            if (selectedScenario === 'contado') {
-                tableHtml += `
-                    <tr>
-                        <td>Servicio de Fumigación (Contado)</td>
-                        <td>${formatCurrency(totalContado / hectares)}</td>
-                        <td>${formatCurrency(totalContado)}</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td><strong>Total a Pagar</strong></td>
-                        <td></td>
-                        <td><strong>${formatCurrency(totalContado)}</strong></td>
-                    </tr>
-                `;
-            } else if (selectedScenario === 'financiamiento') {
-                const initialDepositPerHa = calculatedData.basePricePerHa * INITIAL_DEPOSIT_PERCENTAGE;
-                const financedPaymentPerHa = (calculatedData.futureValueFinanciamiento && hectares) ? calculatedData.futureValueFinanciamiento / hectares : 0;
-
-                tableHtml += `
-                    <tr>
-                        <td>Abono Inicial (45%)</td>
-                        <td>${formatCurrency(initialDepositPerHa)}</td>
-                        <td>${formatCurrency(initialDepositAmount)}</td>
-                    </tr>
-                    <tr>
-                        <td>Pago Final (55% Financiado)</td>
-                        <td>${formatCurrency(financedPaymentPerHa)}</td>
-                        <td>${formatCurrency(futureValueFinanciamiento)}</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td><strong>Total a Pagar</strong></td>
-                        <td><strong>${formatCurrency(initialDepositPerHa + financedPaymentPerHa)}</strong></td>
-                        <td><strong>${formatCurrency(totalFinanciamientoScenario)}</strong></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="mora-note">Nota: En caso de mora en el pago final, se aplicarán cargos adicionales.</td>
-                    </tr>
-                `;
-            } else if (selectedScenario === 'cosecha') {
-                const totalCosechaPerHa = (futureValueCosecha && hectares) ? futureValueCosecha / hectares : 0;
-
-                tableHtml += `
-                    <tr>
-                        <td>Pago Único a Final de Cosecha</td>
-                        <td>${formatCurrency(totalCosechaPerHa)}</td>
-                        <td>${formatCurrency(futureValueCosecha)}</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td><strong>MONTO ÚNICO A PAGAR AL FINAL DE COSECHA</strong></td>
-                        <td></td>
-                        <td><strong>${formatCurrency(futureValueCosecha)}</strong></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="mora-note">Nota: En caso de mora en el pago, se aplicarán cargos adicionales.</td>
-                    </tr>
-                `;
-            }
-
-            tableHtml += `
-                    </tbody>
-                </table>
-            `;
-            pdfContentDiv.innerHTML += tableHtml;
-            console.log("Results table added.");
-
-            // Add notes section
-            pdfContentDiv.innerHTML += `
-                <div class="pdf-notes-section">
-                    <h2>Consideraciones Importantes:</h2>
-                    <ul>
-                        <li>
-                            <span class="bullet-icon">✅</span>
-                            <span>El precio base por hectárea varía según el volumen de mezcla seleccionado.</span>
-                        </li>
-                        <li>
-                            <span class="bullet-icon">✅</span>
-                            <span>Suministramos la <strong>Nivelación del pH</strong> en el costo de nuestros servicios.</span>
-                        </li>
-                        <li>
-                            <span class="bullet-icon">✅</span>
-                            <span>Nuestros precios <strong>no incluyen IVA</strong>.</span>
-                        </li>
-                        <li>
-                            <span class="bullet-icon">✅</span>
-                            <span>Montos aplican para el pago €. En Bolívares, el monto de divisas a cancelar se regirá por la <strong>tasa</strong> del Euro (€) emitida por el Banco Central de Venezuela (BCV) para la fecha del pago.</span>
-                        </li>
-                        <li>
-                            <span class="bullet-icon">✅</span>
-                            <span>Remita el comprobante de pago a <strong>nuestra</strong> línea de atención al cliente <strong>(0424) 405-4139 vía WhatsApp</strong> y a nuestro email: <strong>aeroservices.vzla@gmail.com</strong> a fin de hacerle llegar su estatus de cuenta.</span>
-                        </li>
-                    </ul>
-                </div>
-            `;
-            console.log("Notes section added.");
-
-            // Add footer
-            pdfContentDiv.innerHTML += `
-                <div class="pdf-footer">
-                    <div class="pdf-slogan">
-                        <p>No fumigamos</p>
-                        <p><strong>Gestionamos Calidad!</strong></p>
-                    </div>
-                    <p>&copy; 2025 AERO SERVICES Venezuela. Todos los derechos reservados.</p>
-                </div>
-            `;
-            console.log("PDF footer added.");
-
-            console.log("HTML content for Budget PDF:", pdfContentDiv.outerHTML); // Log the HTML content for debugging
-
-            // Set up html2pdf options
-            const options = {
-                margin: 0.5, // Margins in inches
-                filename: `Presupuesto_AERO_SERVICES_${clientName.replace(/\s/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
-                    scale: 3, // Increased scale for better resolution
-                    logging: true,
-                    dpi: 300, // Increased DPI
-                    letterRendering: true,
-                    useCORS: true, // Added for cross-origin images
-                    allowTaint: true // Added as fallback for cross-origin images
-                },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            console.log("html2pdf options set.");
-
-            // Generate PDF
-            try {
-                showCustomMessage("Generando PDF del presupuesto... Por favor, espera.");
-                html2pdf().from(pdfContentDiv).set(options).save().then(() => {
-                    console.log("PDF generated and saved successfully.");
-                    hideConfirmModal();
-                }).catch(error => {
-                    console.error("Error during PDF generation:", error);
-                    showCustomMessage("Error al generar el PDF del presupuesto: " + error.message);
-                    hideConfirmModal();
-                });
-            } catch (error) {
-                console.error("Error calling html2pdf:", error);
-                showCustomMessage("Error inesperado al iniciar la generación del PDF: " + error.message);
-                hideConfirmModal();
-            }
+            // Restore original display after printing
+            document.getElementById('main-calculator-page').classList.remove('print-active-section');
+            showMainCalculatorPage(); // Return to main calculator view
         }
-        window.generateBudgetPDF = generateBudgetPDF;
+        window.printBudgetReport = printBudgetReport;
 
 
         // --- Page Navigation ---
         function showMainCalculatorPage() {
-            document.getElementById('auth-page').style.display = 'none';
             document.getElementById('main-calculator-page').style.display = 'block';
             document.getElementById('history-page').style.display = 'none';
             document.getElementById('delayCalculationSection').style.display = 'none'; // Hide delay section when returning
+            document.getElementById('admin-panel').style.display = 'block'; // Show admin panel
         }
         // Expose function to global scope
         window.showMainCalculatorPage = showMainCalculatorPage;
 
 
         async function showHistoryPage() {
-            document.getElementById('auth-page').style.display = 'none';
             document.getElementById('main-calculator-page').style.display = 'none';
             document.getElementById('history-page').style.display = 'block';
             document.getElementById('delayCalculationSection').style.display = 'none'; // Hide delay section initially when showing history
+            document.getElementById('admin-panel').style.display = 'none'; // Hide admin panel
             await fetchServiceHistory(); // Load history when showing the page
         }
         // Expose function to global scope
         window.showHistoryPage = showHistoryPage;
-
-        function showAuthPage() {
-            document.getElementById('auth-page').style.display = 'block';
-            document.getElementById('main-calculator-page').style.display = 'none';
-            document.getElementById('history-page').style.display = 'none';
-            document.getElementById('delayCalculationSection').style.display = 'none';
-        }
-        window.showAuthPage = showAuthPage;
-
-        function showLoginPage() {
-            // Currently, auth-page only has login/signup. If separate forms are added, this would toggle them.
-            showAuthPage();
-        }
-        window.showLoginPage = showLoginPage;
-
-        function showSignupPage() {
-            // Currently, auth-page only has login/signup. If separate forms are added, this would toggle them.
-            showAuthPage();
-        }
-        window.signupUser = signupUser;
-
 
         // --- Custom Modal Functions ---
         let onConfirmCallback = null;
@@ -2069,293 +1859,227 @@
         }
         window.deleteService = deleteService; // Expose to global scope
 
-        // --- Export/Import Functions ---
-        async function exportData() {
-            if (!firebaseInitialized || !window.db || !window.userId) {
-                showCustomMessage("Firebase no está listo o no autenticado para exportar datos.");
-                return;
-            }
-            try {
-                const currentAppId = window.firebaseApp ? window.firebaseApp.options.projectId : 'default-fumigation-app-id';
-                const q = query(collection(window.db, `artifacts/${currentAppId}/users/${window.userId}/serviceRecords`));
-                const querySnapshot = await getDocs(q);
-                const dataToExport = [];
-                querySnapshot.forEach((doc) => {
-                    dataToExport.push(doc.data());
-                });
 
-                const jsonString = JSON.stringify(dataToExport, null, 2);
-                const blob = new Blob([jsonString], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `aero-services-data-${window.userId}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showCustomMessage("Historial exportado con éxito.");
-            } catch (e) {
-                console.error("Error exporting data:", e);
-                showCustomMessage("Error al importar el historial: " + e.message);
-            }
-        }
-        window.exportData = exportData;
-
-        async function importData(event) {
-            if (!firebaseInitialized || !window.db || !window.userId) {
-                showCustomMessage("Firebase no está listo o no autenticado para importar datos.");
-                return;
-            }
-            const file = event.target.files[0];
-            if (!file) {
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (!Array.isArray(importedData)) {
-                        showCustomMessage("El archivo importado no es un formato de historial válido (debe ser un array de objetos).");
-                        return;
-                    }
-
-                    const currentAppId = window.firebaseApp ? window.firebaseApp.options.projectId : 'default-fumigation-app-id';
-                    let importedCount = 0;
-                    for (const record of importedData) {
-                        // Remove any potential ID field if present, as Firestore will generate a new one
-                        const { id, ...recordWithoutId } = record;
-                        await addDoc(collection(window.db, `artifacts/${currentAppId}/users/${window.userId}/serviceRecords`), recordWithoutId);
-                        importedCount++;
-                    }
-                    showCustomMessage(`Se importaron ${importedCount} servicios con éxito.`);
-                    fetchServiceHistory(); // Refresh the list after import
-                } catch (error) {
-                    console.error("Error importing data:", error);
-                    showCustomMessage("Error al importar el historial: " + error.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-        window.importData = importData;
-
-        // --- New Authentication Functions ---
-        async function loginUser() {
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
+        // --- Authentication Functions ---
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const authErrorMessage = document.getElementById('auth-error-message');
+            authErrorMessage.style.display = 'none';
 
             if (!email || !password) {
-                showCustomMessage("Por favor, ingresa tu correo y contraseña.");
+                authErrorMessage.textContent = 'Por favor, ingresa tu correo y contraseña.';
+                authErrorMessage.style.display = 'block';
                 return;
             }
 
             try {
                 await signInWithEmailAndPassword(window.auth, email, password);
-                showCustomMessage("¡Inicio de sesión exitoso!");
-                // Data will automatically load due to onAuthStateChanged listener
+                // User will be redirected by onAuthStateChanged
             } catch (error) {
-                console.error("Error al iniciar sesión:", error);
-                let errorMessage = "Error al iniciar sesión. Verifica tu correo y contraseña.";
+                console.error("Error during login:", error);
+                let errorMessage = 'Error al iniciar sesión. Verifica tu correo y contraseña.';
                 if (error.code === 'auth/user-not-found') {
-                    errorMessage = "No hay usuario registrado con ese correo electrónico.";
+                    errorMessage = 'Usuario no encontrado. Por favor, regístrate o verifica tu correo.';
                 } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = "Contraseña incorrecta.";
+                    errorMessage = 'Contraseña incorrecta.';
                 } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = "Formato de correo electrónico inválido.";
+                    errorMessage = 'Correo electrónico inválido.';
                 }
-                showCustomMessage(errorMessage);
+                authErrorMessage.textContent = errorMessage;
+                authErrorMessage.style.display = 'block';
             }
         }
-        window.loginUser = loginUser;
 
-        async function signupUser() {
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
+        async function handleRegister() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const authErrorMessage = document.getElementById('auth-error-message');
+            authErrorMessage.style.display = 'none';
 
             if (!email || !password) {
-                showCustomMessage("Por favor, ingresa un correo y una contraseña para registrarte.");
+                authErrorMessage.textContent = 'Por favor, ingresa un correo y una contraseña.';
+                authErrorMessage.style.display = 'block';
                 return;
             }
             if (password.length < 6) {
-                showCustomMessage("La contraseña debe tener al menos 6 caracteres.");
+                authErrorMessage.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+                authErrorMessage.style.display = 'block';
                 return;
             }
 
             try {
                 await createUserWithEmailAndPassword(window.auth, email, password);
-                showCustomMessage("¡Registro exitoso! Has iniciado sesión automáticamente.");
-                // Data will automatically load due to onAuthStateChanged listener
+                showCustomMessage("Registro exitoso. ¡Bienvenido!");
+                // User will be redirected by onAuthStateChanged
             } catch (error) {
-                    console.error("Error al registrarse:", error);
-                let errorMessage = "Error al registrarse. Intenta con otro correo.";
+                console.error("Error during registration:", error);
+                let errorMessage = 'Error al registrar el usuario.';
                 if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = "El correo electrónico ya está en uso.";
+                    errorMessage = 'Este correo electrónico ya está en uso.';
                 } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = "Formato de correo electrónico inválido.";
+                    errorMessage = 'Correo electrónico inválido.';
                 } else if (error.code === 'auth/weak-password') {
-                    errorMessage = "La contraseña es demasiado débil. Debe tener al menos 6 caracteres.";
+                    errorMessage = 'La contraseña es demasiado débil.';
                 }
-                showCustomMessage(errorMessage);
+                authErrorMessage.textContent = errorMessage;
+                authErrorMessage.style.display = 'block';
             }
         }
-        window.signupUser = signupUser;
 
-        async function logoutUser() {
+        async function signOutUser() {
             try {
                 await signOut(window.auth);
-                showCustomMessage("Sesión cerrada correctamente. Volviendo a la autenticación anónima.");
-                // onAuthStateChanged will handle switching back to anonymous user
+                console.log("User signed out.");
+                // Redirect to login page
+                document.getElementById('auth-page').style.display = 'flex';
+                document.getElementById('admin-panel').style.display = 'none';
+                document.getElementById('main-calculator-page').style.display = 'none';
+                document.getElementById('history-page').style.display = 'none';
+                window.userId = null; // Clear user ID
+                document.getElementById('userIdDisplay').textContent = ''; // Clear display
+                showCustomMessage("Has cerrado sesión.");
             } catch (error) {
-                console.error("Error al cerrar sesión:", error);
+                console.error("Error signing out:", error);
                 showCustomMessage("Error al cerrar sesión: " + error.message);
             }
         }
-        window.logoutUser = logoutUser;
+        window.signOutUser = signOutUser; // Expose to global scope
 
 
         // Initial setup on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function() {
             // =================================================================================================
-            // === CONFIGURACIÓN DE FIREBASE: ¡IMPORTANTE! REEMPLAZA CON TUS PROPIOS VALORES ===
+            // === FIREBASE CONFIGURATION: IMPORTANT! REPLACE WITH YOUR OWN VALUES ===
             // =================================================================================================
-            // Si deseas que el historial de servicios se guarde de forma persistente,
-            // pega aquí el objeto de configuración de tu proyecto Firebase.
-            // Puedes encontrarlo en la consola de Firebase: Configuración del proyecto -> Tus apps -> SDK setup and configuration.
+            // If you want the service history to be persistently saved,
+            // paste your Firebase project configuration object here.
+            // You can find it in the Firebase console: Project settings -> Your apps -> SDK setup and configuration.
             //
-            // EJEMPLO (NO USES ESTOS VALORES, SON SOLO DE REFERENCIA):
+            // EXAMPLE (DO NOT USE THESE VALUES, THEY ARE FOR REFERENCE ONLY):
             // const userFirebaseConfig = {
             //     apiKey: "AIzaSyC...",
-            //     authDomain: "tu-proyecto.firebaseapp.com",
-            //     projectId: "tu-proyecto",
-            //     storageBucket: "tu-proyecto.appspot.com",
+            //     authDomain: "your-project.firebaseapp.com",
+            //     projectId: "your-project",
+            //     storageBucket: "your-project.appspot.com",
             //     messagingSenderId: "1234567890",
             //     appId: "1:234567890:web:abcdef123456",
-            //     measurementId: "G-XXXXXXXXXX" // Opcional, si usas Google Analytics
+            //     measurementId: "G-XXXXXXXXXX" // Optional, if you use Google Analytics
             // };
             //
-            // SI NO PEGAS TUS VALORES AQUÍ, LA APLICACIÓN NO PODRÁ CONECTARSE A FIREBASE FUERA DE ESTE ENTORNO.
+            // If you don't paste your configuration here, the application will work, but the service history will NOT be saved.
             // =================================================================================================
             const userFirebaseConfig = {
-                // 👇 Pega el valor de 'apiKey' de tu Firebase aquí, **entre las comillas**.
+                // 👇 Paste your Firebase 'apiKey' here, **between the quotes**.
                 apiKey: "AIzaSyB5y_JSgvZZhhF2lblA3Xf-4CHkq4c4Dd8",
-                // 👇 Pega el valor de 'authDomain' de tu Firebase aquí, **entre las comillas**.
+                // 👇 Paste your Firebase 'authDomain' here, **between the quotes**.
                 authDomain: "calculadora-de-servicios-9d144.firebaseapp.com",
-                // 👇 Pega el valor de 'projectId' de tu Firebase aquí, **entre las comillas**.
+                // 👇 Paste your Firebase 'projectId' here, **between the quotes**.
                 projectId: "calculadora-de-servicios-9d144",
-                // ? Pega el valor de 'storageBucket' de tu Firebase aquí, **entre las comillas**.
+                // 👇 Paste your Firebase 'storageBucket' here, **between the quotes**.
                 storageBucket: "calculadora-de-servicios-9d144.firebasestorage.app",
-                // ? Pega el valor de 'messagingSenderId' de tu Firebase aquí, **entre las comillas**.
+                // 👇 Paste your Firebase 'messagingSenderId' here, **between the quotes**.
                 messagingSenderId: "782870922497",
-                // 👇 Pega el valor de 'appId' de tu Firebase aquí, **entre las comillas**.
+                // 👇 Paste your Firebase 'appId' here, **between the quotes**.
                 appId: "1:782870922497:web:10b36c6ad335728f944700",
-                // 👇 Si tienes 'measurementId', pégalo aquí también, **entre las comillas**.
-                measurementId: "G-2M7V4M3BSL"
+                measurementId: "G-2M7V4M3BSL" // If you have 'measurementId', paste it here too, **between the quotes**.
             };
             // =================================================================================================
-            // === IMPORTANTE: HABILITA LOS MÉTODOS DE INICIO DE SESIÓN EN TU PROYECTO DE FIREBASE ===
-            // Ve a Firebase Console -> Authentication -> Sign-in method y habilita "Anonymous" y "Email/Password".
+            // === IMPORTANT: ENABLE EMAIL/PASSWORD AUTHENTICATION IN YOUR FIREBASE PROJECT ===
+            // Go to Firebase Console -> Authentication -> Sign-in method and enable "Email/Password".
             // =================================================================================================
 
 
-            // Determina la configuración de Firebase a usar
+            // Determine which Firebase config to use
             let firebaseConfigToUse = {};
             let isRunningInCanvas = typeof __firebase_config !== 'undefined' && __firebase_config !== '{}';
 
             if (isRunningInCanvas) {
+                // If in Canvas environment, use Canvas-provided config
                 firebaseConfigToUse = JSON.parse(__firebase_config);
                 console.log("Using Canvas-provided Firebase config (from __firebase_config).");
             } else if (userFirebaseConfig.apiKey && userFirebaseConfig.projectId) {
+                // If user provided a valid config in the code, use it
                 firebaseConfigToUse = userFirebaseConfig;
                 console.log("Using user-provided Firebase config (from userFirebaseConfig).");
             } else {
+                // If no Canvas or user config, Firebase will not be initialized
                 console.warn("Firebase config not found. Firestore features will be disabled.");
             }
 
+            // Initialize Firebase only if we have a valid config
             if (Object.keys(firebaseConfigToUse).length > 0 && firebaseConfigToUse.apiKey) {
                 try {
                     window.firebaseApp = initializeApp(firebaseConfigToUse);
                     window.db = getFirestore(window.firebaseApp);
                     window.auth = getAuth(window.firebaseApp);
-                    firebaseInitialized = true;
+                    firebaseInitialized = true; // Set flag to true
                     console.log("Firebase initialized successfully.");
 
                     onAuthStateChanged(window.auth, async (user) => {
+                        if (user) {
+                            window.userId = user.uid;
+                            console.log("Authenticated user ID:", window.userId);
+                            document.getElementById('auth-page').style.display = 'none';
+                            showMainCalculatorPage(); // Show main app if authenticated
+                        } else {
+                            console.log("No user authenticated. Showing login page.");
+                            document.getElementById('auth-page').style.display = 'flex';
+                            document.getElementById('admin-panel').style.display = 'none';
+                            document.getElementById('main-calculator-page').style.display = 'none';
+                            document.getElementById('history-page').style.display = 'none';
+                            window.userId = null; // Ensure userId is null if not authenticated
+                        }
+                        // Display the user ID on the page for debugging
                         const userIdDisplay = document.getElementById('userIdDisplay');
-                        const userEmailDisplay = document.getElementById('userEmailDisplay');
-                        const logoutButton = document.getElementById('logoutButton');
-
-                        if (user && user.email) { // User is authenticated with email/password
-                            window.userId = user.uid;
-                            window.userEmail = user.email;
+                        if (userIdDisplay && window.userId) {
                             userIdDisplay.textContent = `ID de Usuario: ${window.userId}`;
-                            userEmailDisplay.textContent = `Email: ${window.userEmail}`;
-                            logoutButton.style.display = 'inline-block';
-                            showMainCalculatorPage(); // Show main app
-                        } else if (user && !user.email) { // User is anonymous
-                            window.userId = user.uid;
-                            window.userEmail = "Usuario Anónimo";
-                            userIdDisplay.textContent = `ID de Usuario: ${window.userId}`;
-                            userEmailDisplay.textContent = `Email: ${window.userEmail}`;
-                            logoutButton.style.display = 'none'; // Hide logout for anonymous
-                            showAuthPage(); // Show auth page to prompt for login/signup
-                        } else { // No user at all, attempt anonymous sign-in, then show auth page
-                            console.log("No user authenticated. Attempting anonymous sign-in...");
-                            try {
-                                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                                if (initialAuthToken && isRunningInCanvas) {
-                                    await signInWithCustomToken(window.auth, initialAuthToken);
-                                    console.log("Signed in with Canvas custom token.");
-                                } else {
-                                    await signInAnonymously(window.auth);
-                                    console.log("Signed in anonymously.");
-                                }
-                                // onAuthStateChanged will fire again with the anonymous user, leading to the 'else if (user && !user.email)' block
-                            } catch (error) {
-                                console.error("Firebase authentication error during sign-in:", error);
-                                window.userId = crypto.randomUUID(); // Fallback to a random ID
-                                window.userEmail = "No Autenticado";
-                                userIdDisplay.textContent = `ID de Usuario: ${window.userId} (No persistente)`;
-                                userEmailDisplay.textContent = `Email: ${window.userEmail}`;
-                                logoutButton.style.display = 'none';
-                                showCustomMessage(`Error de autenticación de Firebase: ${error.message}. Por favor, asegúrate de que la autenticación anónima y de correo/contraseña estén habilitadas en tu proyecto de Firebase.`);
-                                showAuthPage(); // Show auth page if sign-in fails
-                            }
+                        } else if (userIdDisplay) {
+                            userIdDisplay.textContent = `ID de Usuario: No autenticado`;
                         }
 
                         loadValuesFromLocalStorage();
                         populateAdminInputs();
-                        calculateCostsAndDisplay();
+                        calculateCostsAndDisplay(); // Initial call to set up the display
                     });
                 } catch (error) {
                     console.error("Error initializing Firebase (top level catch):", error);
                     showCustomMessage("Error al inicializar Firebase. Por favor, verifica tu configuración y la conexión a internet.");
-                    firebaseInitialized = false;
-                    showAuthPage(); // Show auth page if Firebase init fails
+                    firebaseInitialized = false; // Ensure flag is false on error
+                    // Even if Firebase fails, ensure the UI is in a consistent state
+                    document.getElementById('auth-page').style.display = 'flex';
+                    document.getElementById('admin-panel').style.display = 'none';
+                    document.getElementById('main-calculator-page').style.display = 'none';
+                    document.getElementById('history-page').style.display = 'none';
+                    window.userId = crypto.randomUUID(); // Fallback to random ID for local operations if Firebase fails
+                    const userIdDisplay = document.getElementById('userIdDisplay');
+                    if (userIdDisplay) {
+                        userIdDisplay.textContent = `ID de Usuario: ${window.userId} (No persistente)`;
+                    }
+                    loadValuesFromLocalStorage();
+                    populateAdminInputs();
+                    calculateCostsAndDisplay(); // Initial call
                 }
             } else {
-                window.userId = crypto.randomUUID(); // Fallback if Firebase not initialized
-                window.userEmail = "No Autenticado";
+                // If Firebase is not initialized, ensure userId has a value for the rest of the app
+                window.userId = crypto.randomUUID();
                 console.log("Firebase not initialized. Using random user ID for local operations.");
+                // Display the user ID on the page for debugging
                 const userIdDisplay = document.getElementById('userIdDisplay');
-                const userEmailDisplay = document.getElementById('userEmailDisplay');
-                const logoutButton = document.getElementById('logoutButton');
-
                 if (userIdDisplay) {
                     userIdDisplay.textContent = `ID de Usuario: ${window.userId} (No persistente)`;
                 }
-                if (userEmailDisplay) {
-                    userEmailDisplay.textContent = `Email: ${window.userEmail}`;
-                }
-                if (logoutButton) {
-                    logoutButton.style.display = 'none';
-                }
-
+                // Show main calculator if Firebase is not initialized (no auth required)
+                document.getElementById('auth-page').style.display = 'none';
+                showMainCalculatorPage();
                 loadValuesFromLocalStorage();
                 populateAdminInputs();
-                calculateCostsAndDisplay();
-                showAuthPage(); // Show auth page if Firebase is not configured
+                calculateCostsAndDisplay(); // Initial call
             }
+
+            // Attach event listeners for login/register buttons
+            document.getElementById('login-button').addEventListener('click', handleLogin);
+            document.getElementById('register-button').addEventListener('click', handleRegister);
         });
     </script>
 </body>
