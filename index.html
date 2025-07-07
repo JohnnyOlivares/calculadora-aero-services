@@ -1,0 +1,2353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precios - AERO SERVICES Venezuela</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- html2pdf.js para generar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 1rem auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            width: auto;
+            height: 120px;
+            margin-right: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #4a5568;
+        }
+        .logo img {
+            width: auto;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 0;
+        }
+        /* Hide slogan by default on screen, it will be shown in footer for PDF */
+        .slogan-on-screen {
+            text-align: right;
+            font-style: italic;
+            color: #4a5568;
+            font-size: 1.6rem;
+            line-height: 1.4;
+        }
+        .slogan-on-screen strong {
+            font-weight: 700;
+            color: #2c5282;
+        }
+        /* Slogan for PDF, hidden by default on screen */
+        .slogan-for-print {
+            display: none; /* Hidden by default on screen, will be shown in PDF generation */
+            margin-top: 0.5rem; /* Space above copyright */
+            font-style: italic;
+            font-size: 0.9rem; /* Smaller for footer */
+            color: #4a5568;
+            line-height: 1.4;
+        }
+        .slogan-for-print strong {
+            font-weight: 700;
+            color: #2c5282;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c5282;
+            margin-top: 0.5rem;
+            margin-bottom: 0.75rem;
+            text-align: center;
+            padding-bottom: 0.25rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .input-group {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .input-group label {
+            margin-bottom: 0;
+            flex-grow: 1;
+            margin-right: 0.5rem;
+            text-align: left;
+        }
+        .input-group input, .input-group select {
+            width: 30%;
+            min-width: 120px;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            transition: border-color 0.2s;
+            text-align: center;
+        }
+        /* Adjust input width for smaller screens if needed */
+        @media (max-width: 640px) {
+            .input-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .input-group label {
+                margin-bottom: 0.25rem;
+                margin-right: 0;
+            }
+            .input-group input, .input-group select {
+                width: 100%;
+                min-width: unset;
+                text-align: left;
+            }
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #63b3ed;
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+        }
+        .notes-section {
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .notes-section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 0.5rem;
+        }
+        .notes-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .notes-section ul li {
+            margin-bottom: 0.4rem;
+            color: #4a5568;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            padding-left: 0.25rem;
+        }
+        /* Removed SVG specific styles */
+        .notes-section ul li .bullet-icon {
+            margin-right: 0.4rem;
+            flex-shrink: 0;
+            margin-top: 0;
+            color: #2c5282; /* Color for the bullet */
+        }
+        .notes-section ul li span {
+            flex-grow: 1;
+        }
+        .contact-info {
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+        .contact-info strong {
+            color: #2c5282;
+        }
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            width: 100%;
+            text-align: right;
+        }
+        @media (max-width: 640px) {
+            .error-message {
+                text-align: left;
+            }
+        }
+        .scenario-selection {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: #e6f2ff;
+            border-radius: 8px;
+            border: 1px solid #b3d9ff;
+            text-align: center;
+        }
+        .scenario-selection label {
+            margin-right: 0.75rem;
+            font-weight: 600;
+            color: #2c5282;
+            cursor: pointer;
+        }
+        .scenario-selection input[type="radio"] {
+            margin-right: 0.25rem;
+            accent-color: #007bff;
+        }
+
+        /* Styles for the budget table */
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background-color: #f7fafc;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        .budget-table th, .budget-table td {
+            padding: 0.75rem 0.6rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .budget-table th {
+            background-color: #e0f2fe;
+            color: #2c5282;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .budget-table td {
+            color: #4a5568;
+            font-size: 1rem;
+        }
+        .budget-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .budget-table .total-row td {
+            background-color: #d1e9ff;
+            font-weight: 700;
+            color: #007bff;
+            font-size: 1.1rem;
+        }
+        .budget-table .mora-note {
+            font-size: 0.85rem;
+            color: #e53e3e;
+            padding-top: 0.25rem;
+            font-style: italic;
+            text-align: right;
+            border-top: 1px dashed #e2e8f0;
+            margin-top: 0.5rem;
+            padding-left: 0.6rem;
+            padding-right: 0.6rem;
+        }
+        .summary-section {
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            background-color: #e6f2ff;
+            border-radius: 8px;
+            border: 1px solid #b3d9ff;
+            text-align: center;
+            font-weight: 600;
+            color: #2c5282;
+            font-size: 1.1rem;
+        }
+        .summary-section .result-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #007bff;
+            background-color: #d1e9ff;
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            display: inline-block;
+            margin-left: 0.25rem;
+        }
+
+        /* New styles for the admin panel */
+        .admin-controls-container {
+            max-width: 900px;
+            margin: 1rem auto 0.5rem auto;
+            padding: 0.75rem;
+            background-color: #e0f7fa;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #b2ebf2;
+            color: #006064;
+        }
+
+        .admin-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            text-align: center;
+            color: #004d40;
+        }
+
+        .admin-input-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+        }
+
+        .admin-input-group label {
+            font-weight: 600;
+            margin-right: 0.5rem;
+            flex-grow: 1;
+        }
+
+        .admin-input-group input {
+            width: 35%;
+            padding: 0.3rem 0.4rem;
+            border: 1px solid #a7d9de;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Styles for the new offer section */
+        .offer-section {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f0fdf4; /* Light green background */
+            border-radius: 8px;
+            border: 1px solid #d1fae5;
+            color: #10b981;
+        }
+        .offer-section p {
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        .offer-section .input-group {
+            margin-bottom: 0.5rem;
+        }
+        .offer-section .input-group label {
+            color: #065f46;
+        }
+        .offer-section .input-group input {
+            border-color: #6ee7b7;
+        }
+
+        /* Buttons for navigation and actions */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .action-buttons button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            background-color: #38a169;
+            color: white;
+            border: none;
+        }
+        .action-buttons button:hover {
+            background-color: #2f855a;
+            transform: translateY(-2px);
+        }
+
+        /* History Page Styles */
+        #history-page {
+            display: none; /* Hidden by default */
+        }
+        .history-list {
+            margin-top: 1.5rem;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        .history-item-details {
+            flex-grow: 1;
+            color: #4a5568;
+        }
+        .history-item-details strong {
+            color: #2c5282;
+        }
+        .history-item .history-actions {
+            display: flex;
+            gap: 0.5rem; /* Space between buttons */
+        }
+        .history-item .history-actions button {
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .history-item .history-actions button:hover {
+            background-color: #0056b3;
+        }
+        .history-item .history-actions .delete-button {
+            background-color: #e53e3e; /* Red for delete */
+        }
+        .history-item .history-actions .delete-button:hover {
+            background-color: #c53030;
+        }
+
+        /* Delay Calculation Section (now integrated) */
+        #delayCalculationSection {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #fffbe6; /* Light yellow background */
+            border-radius: 8px;
+            border: 1px solid #ffeeba;
+            color: #92400e;
+            display: none; /* Hidden by default, shown when a service is selected */
+        }
+        #delayCalculationSection h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #78350f;
+        }
+        #delayCalculationSection .input-group {
+            margin-bottom: 0.75rem;
+        }
+        #delayCalculationSection .result-box {
+            background-color: #fff3cd;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-weight: 600;
+            color: #78350f;
+        }
+        #delayCalculationSection .result-box span {
+            font-weight: 700;
+            color: #c2410c;
+        }
+        #delayCalculationSection .print-button {
+            padding: 0.75rem 1.5rem;
+            background-color: #38a169;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            margin-top: 1rem;
+        }
+        .action-buttons button:hover {
+            background-color: #2f855a;
+            transform: translateY(-2px);
+        }
+
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none; /* Hidden by default */
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            color: #333;
+        }
+        .modal-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2c5282;
+        }
+        .modal-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .modal-buttons button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        .modal-buttons .confirm-button {
+            background-color: #e53e3e;
+            color: white;
+        }
+        .modal-buttons .confirm-button:hover {
+            background-color: #c53030;
+        }
+        .modal-buttons .cancel-button {
+            background-color: #cbd5e0;
+            color: #4a5568;
+        }
+        .modal-buttons .cancel-button:hover {
+                background-color: #a0aec0;
+        }
+
+        /* Styles for PDF generation (html2pdf.js uses these) */
+        /* These styles will be applied to the content when it's converted to PDF */
+        .pdf-content {
+            font-family: 'Inter', sans-serif;
+            color: #000; /* Ensure black text for PDF */
+            padding: 1rem;
+            background-color: #fff;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+        .pdf-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #2c5282;
+        }
+        .pdf-header .logo-img {
+            height: 70px;
+            width: auto;
+        }
+        .pdf-header .header-right {
+            text-align: right;
+        }
+        .pdf-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 0.25rem;
+        }
+        .pdf-header p {
+            font-size: 0.9rem;
+            color: #000;
+            margin-bottom: 0.15rem;
+        }
+        .pdf-header span {
+            color: #000;
+        }
+        .pdf-section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c5282;
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            text-align: center;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .pdf-offer-section p {
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            color: #000;
+        }
+        .pdf-input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.3rem;
+        }
+        .pdf-input-group label {
+            font-weight: 600;
+            color: #000;
+            flex-basis: 45%;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .pdf-input-group span {
+            flex-basis: 50%;
+            text-align: right;
+            color: #000;
+            font-size: 0.9rem;
+        }
+        .pdf-budget-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background-color: #fff;
+            border: 1px solid #e2e8f0;
+        }
+        .pdf-budget-table th, .pdf-budget-table td {
+            padding: 0.5rem 0.6rem;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+            color: #000;
+            font-size: 0.9rem;
+        }
+        .pdf-budget-table th {
+            background-color: #f0f4f8;
+            font-weight: 700;
+        }
+        .pdf-budget-table .total-row td {
+            background-color: #e0f2fe;
+            font-weight: 700;
+            color: #000;
+            font-size: 1rem;
+        }
+        .pdf-budget-table td:nth-child(2),
+        .pdf-budget-table td:nth-child(3) {
+            text-align: right;
+        }
+        .pdf-budget-table .mora-note {
+            font-size: 0.8rem;
+            color: #000;
+            padding-top: 0.25rem;
+            font-style: italic;
+            text-align: right;
+            border-top: 1px dashed #e2e8f0;
+        }
+        .pdf-notes-section {
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .pdf-notes-section h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .pdf-notes-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .pdf-notes-section ul li {
+            margin-bottom: 0.2rem;
+            color: #000;
+            line-height: 1.3;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.75rem;
+        }
+        .pdf-notes-section ul li .bullet-icon {
+            margin-right: 0.3rem;
+            flex-shrink: 0;
+            width: 0.8em;
+            height: 0.8em;
+            fill: #000;
+            color: #2c5282; /* Color for the bullet in PDF */
+        }
+        .pdf-footer {
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #000;
+        }
+        .pdf-slogan {
+            margin-bottom: 0.3rem;
+            font-style: italic;
+            color: #000;
+        }
+        .pdf-slogan strong {
+            font-weight: 700;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="admin-panel" class="admin-controls-container">
+        <h2 class="admin-title">Configuración de Precios y Tasas (Solo para Edición)</h2>
+        <div class="admin-input-group">
+            <label for="adminBase15">Precio Base 15 Lts/Ha (€):</label>
+            <input type="number" id="adminBase15" step="0.01" oninput="updateAdminValues()">
+        </div>
+        <div class="admin-input-group">
+            <label for="adminBase20">Precio Base 20 Lts/Ha (€):</label>
+            <input type="number" id="adminBase20" step="0.01" oninput="updateAdminValues()">
+        </div>
+        <div class="admin-input-group">
+            <label for="adminBase25">Precio Base 25 Lts/Ha (€):</label>
+            <input type="number" id="adminBase25" step="0.01" oninput="updateAdminValues()">
+        </div>
+        <div class="admin-input-group">
+            <label for="adminCommercialRate">Tasa Comercial Anual (%):</label>
+            <input type="number" id="adminCommercialRate" step="0.1" oninput="updateAdminValues()">
+        </div>
+        <div class="admin-input-group">
+            <label for="adminHighRate">Tasa Cosecha Anual (%):</label>
+            <input type="number" id="adminHighRate" step="0.1" oninput="updateAdminValues()">
+        </div>
+        <div class="admin-input-group">
+            <label for="adminDelayInterestRate">Interés por Retraso Anual (%):</label>
+            <input type="number" id="adminDelayInterestRate" step="0.1" oninput="updateAdminValues()">
+        </div>
+        <div class="scenario-selection">
+            <p class="font-semibold mb-2">Seleccione un Escenario de Pago:</p>
+            <label>
+                <input type="radio" name="scenario" value="contado" checked onchange="handleScenarioChange()"> Pago de Contado
+            </label>
+            <label>
+                <input type="radio" name="scenario" value="financiamiento" onchange="handleScenarioChange()"> Financiamiento (Abono 45%)
+            </label>
+            <label>
+                <input type="radio" name="scenario" value="cosecha" onchange="handleScenarioChange()"> Pago a Final de Cosecha
+            </label>
+        </div>
+        <!-- Display User ID and Email for debugging -->
+        <div class="text-sm text-gray-600 mt-2 text-center">
+            <span id="userIdDisplay">ID de Usuario: Cargando...</span>
+            <span id="userEmailDisplay" class="block">Email: No Autenticado</span>
+        </div>
+        <!-- New section for Export/Import and Logout -->
+        <div class="action-buttons mt-4">
+            <button onclick="exportData()">Exportar Historial</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+            <button onclick="document.getElementById('importFile').click()">Importar Historial</button>
+            <button id="logoutButton" onclick="logoutUser()" style="display: none;">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <!-- Authentication Page -->
+    <div id="auth-page" class="container" style="display: none;">
+        <h2 class="section-title">Acceso a AERO SERVICES Venezuela</h2>
+        <p class="text-center text-lg font-semibold text-gray-700 mb-6">Inicia Sesión o Regístrate para Sincronizar tu Historial</p>
+
+        <div class="input-group">
+            <label for="authEmail">Correo Electrónico:</label>
+            <input type="email" id="authEmail" placeholder="tu@ejemplo.com">
+        </div>
+        <div class="input-group">
+            <label for="authPassword">Contraseña:</label>
+            <input type="password" id="authPassword" placeholder="••••••••">
+        </div>
+
+        <div class="action-buttons mt-6">
+            <button onclick="loginUser()">Iniciar Sesión</button>
+            <button onclick="signupUser()">Registrarse</button>
+        </div>
+        <p class="text-center text-sm text-gray-500 mt-4">
+            Al registrarte o iniciar sesión, tu historial de servicios se sincronizará automáticamente entre tus dispositivos.
+        </p>
+    </div>
+
+    <!-- Main Calculator Page -->
+    <div id="main-calculator-page" class="container">
+        <header class="header">
+            <div class="logo-section">
+                <!-- Logo de AERO SERVICES Venezuela -->
+                <div class="logo">
+                    <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="AERO SERVICES Logo">
+                </div>
+                <!-- Se elimina el nombre de la empresa y el RIF -->
+                <div class="company-info">
+                    <!-- Contenido oculto -->
+                </div>
+            </div>
+            <div class="slogan-on-screen"> <!-- Slogan for screen display -->
+                <p>No fumigamos</p>
+                <p><strong>Gestionamos Calidad!</strong></p>
+            </div>
+        </header>
+
+        <h2 class="section-title">Inversión en Servicios Aéreos con Drone</h2>
+        <p class="text-center text-lg font-semibold text-gray-700 mb-6">Presupuesto por Hectárea (Ha.)</p>
+
+        <!-- New Offer Section -->
+        <div class="offer-section">
+            <p>Por medio del presente, <strong>AERO SERVICES Venezuela</strong> hace entrega de la oferta de servicios de fumigación con las siguientes condiciones:</p>
+            <div class="input-group">
+                <label for="clientName">Nombre del Cliente:</label>
+                <input type="text" id="clientName" placeholder="Ingrese nombre del cliente">
+                <span id="printClientName" style="display: none;"></span> <!-- For printing -->
+            </div>
+            <div class="input-group">
+                <label for="clientId">Número de Cédula/RIF:</label>
+                <input type="text" id="clientId" placeholder="Ingrese Cédula/RIF">
+                <span id="printClientId" style="display: none;"></span> <!-- For printing -->
+            </div>
+            <div class="input-group">
+                <label for="serviceDate">Fecha de Prestación del Servicio:</label>
+                <input type="date" id="serviceDate" onchange="handleDateChange()">
+                <span id="printServiceDate" style="display: none;"></span> <!-- For printing -->
+            </div>
+            <div class="input-group">
+                <label for="estimatedPaymentDate">Fecha Estimada de Pago del Servicio:</label>
+                <input type="date" id="estimatedPaymentDate" onchange="handleDateChange()">
+                <span id="printEstimatedPaymentDate" style="display: none;"></span> <!-- For printing -->
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="hectares">Hectáreas a Fumigar:</label>
+            <input type="number" id="hectares" value="1" min="1" step="1" oninput="calculateCostsAndDisplay()">
+            <div id="hectaresError" class="error-message"></div>
+            <span id="printHectares" style="display: none;"></span> <!-- For printing -->
+        </div>
+
+        <div class="input-group">
+            <label for="mixVolume">Volumen de Mezcla (Lts/Ha):</label>
+            <select id="mixVolume" onchange="calculateCostsAndDisplay()">
+                <option value="15">15 Lts/Ha</option>
+                <option value="20">20 Lts/Ha</option>
+                <option value="25">25 Lts/Ha</option>
+            </select>
+            <div id="mixVolumeInfo" class="text-sm text-gray-500 mt-1" style="width: 100%; text-align: right;">Seleccione el volumen de mezcla para determinar el precio base por hectárea.</div>
+            <span id="printMixVolume" style="display: none;"></span> <!-- For printing -->
+        </div>
+
+        <div class="input-group">
+            <label for="financingMonths">Meses para el Pago (desde la prestación del servicio):</label>
+            <input type="text" id="financingMonths" value="N/A" readonly>
+            <div id="financingMonthsError" class="error-message"></div>
+            <div id="financingMonthsInfo" class="text-sm text-gray-500 mt-1" style="width: 100%; text-align: right;">Este es el período en meses hasta el pago único final.</div>
+            <span id="printFinancingMonths" style="display: none;"></span> <!-- For printing -->
+        </div>
+
+        <div id="resultsTableContainer">
+            <!-- La tabla de resultados se generará aquí -->
+        </div>
+
+        <div class="notes-section" id="notes-section">
+            <h2>Consideraciones Importantes:</h2>
+            <ul>
+                <li>
+                    <span class="bullet-icon">✅</span>
+                    <span>El precio base por hectárea varía según el volumen de mezcla seleccionado.</span>
+                </li>
+                <li>
+                    <span class="bullet-icon">✅</span>
+                    <span>Suministramos la <strong>Nivelación del pH</strong> en el costo de nuestros servicios.</span>
+                </li>
+                <li>
+                    <span class="bullet-icon">✅</span>
+                    <span>Nuestros precios <strong>no incluyen IVA</strong>.</span>
+                </li>
+                <li>
+                    <span class="bullet-icon">✅</span>
+                    <span>Montos aplican para el pago €. En Bolívares, el monto de divisas a cancelar se regirá por la <strong>tasa</strong> del Euro (€) emitida por el Banco Central de Venezuela (BCV) para la fecha del pago.</span>
+                </li>
+                <li>
+                    <span class="bullet-icon">✅</span>
+                    <span>Remita el comprobante de pago a <strong>nuestra</strong> línea de atención al cliente <strong>(0424) 405-4139 vía WhatsApp</strong> y a nuestro email: <strong>aeroservices.vzla@gmail.com</strong> a fin de hacerle llegar su estatus de cuenta.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="action-buttons">
+            <button onclick="saveService()">Guardar Servicio</button>
+            <button onclick="showHistoryPage()">Ver Historial de Servicios</button>
+            <button onclick="generateBudgetPDF()">Descargar Presupuesto PDF</button> <!-- Changed button text and function -->
+        </div>
+
+        <footer class="contact-info">
+            <div class="slogan-for-print"> <!-- Slogan for PDF display -->
+                <p>No fumigamos</p>
+                <p><strong>Gestionamos Calidad!</strong></p>
+            </div>
+            <p>&copy; 2025 AERO SERVICES Venezuela. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <!-- History Page -->
+    <div id="history-page" class="container">
+        <h2 class="section-title">Historial de Servicios y Cálculo de Retrasos</h2>
+        <div id="serviceHistoryList" class="history-list">
+            <p class="text-center text-gray-500">Cargando historial de servicios...</p>
+        </div>
+
+        <!-- Delay Calculation Section - Now integrated directly into history page -->
+        <div id="delayCalculationSection" class="delay-calculation-section">
+            <div class="print-only-header" style="display: none;">
+                <div style="text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #2c5282;">
+                    <h1 style="font-size: 1.8rem; font-weight: 700; color: #2c5282; margin-bottom: 0.5rem;">Reporte de Cálculo de Retraso de Pago</h1>
+                    <p style="font-size: 1rem; color: #4a5568;">AERO SERVICES Venezuela</p>
+                    <p style="font-size: 0.9rem; color: #666;">Fecha de Emisión: <span id="reportIssueDatePrint"></span></p>
+                </div>
+            </div>
+            <h3>Detalle de Cálculo por Retraso</h3>
+            <div class="input-group">
+                <label>Cliente:</label>
+                <span id="delayClientName"></span>
+            </div>
+            <div class="input-group">
+                <label>Cédula/RIF:</label>
+                <span id="delayClientId"></span>
+            </div>
+            <div class="input-group">
+                <label>Fecha de Servicio:</label>
+                <span id="delayServiceDate"></span>
+            </div>
+            <div class="input-group">
+                <label>Fecha Estimada de Pago:</label>
+                <span id="delayEstimatedPaymentDate"></span>
+            </div>
+            <div class="input-group">
+                <label>Monto Original Adeudado:</label>
+                <span id="delayOriginalAmountDue"></span>
+            </div>
+            <div class="input-group">
+                <label for="actualPaymentDate">Fecha Real de Pago:</label>
+                <input type="date" id="actualPaymentDate" onchange="calculateDelayInterest(this.value)">
+            </div>
+            <div id="delayCalculationResults" class="result-box" style="display: none;">
+                <p>Meses de Retraso Calculados: <span id="calculatedDelayMonths"></span></p>
+                <p>Interés Adicional por Retraso: <span id="additionalInterestAmount"></span></p>
+                <p><strong>Nuevo Monto Total Adeudado con Retraso: <span id="newTotalWithDelay"></span></strong></p>
+                <p><strong>Costo por Hectárea con Retraso (Total): <span id="newPricePerHectareWithDelay"></span></strong></p>
+                <!-- Updated note with dynamic days -->
+                <p class="text-sm mt-2" id="delayNote">Nota: Se está efectuando un cálculo por retraso de <span id="delayDaysCount"></span> días desde la fecha convenida de pago inicialmente al financiamiento.</p>
+            </div>
+            <div class="action-buttons mt-4">
+                <button onclick="generateDelayReportPDF()" id="printReportButton" style="display: none;">Descargar Reporte PDF</button>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button onclick="showMainCalculatorPage()">Volver a la Calculadora</button>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirmar Eliminación</h3>
+            <p id="modalMessage">¿Estás seguro de que deseas eliminar este servicio?</p>
+            <div class="modal-buttons">
+                <button class="confirm-button" id="modalConfirmBtn">Sí, Eliminar</button>
+                <button class="cancel-button" id="modalCancelBtn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+        // Global Firebase variables
+        window.firebaseApp = null;
+        window.db = null;
+        window.auth = null;
+        window.userId = null;
+        window.userEmail = "No Autenticado"; // New global for user email
+        let firebaseInitialized = false;
+
+        // Definición de precios base por hectárea según el volumen de mezcla
+        let BASE_PRICES_BY_MIX_VOLUME = {
+            '15': 18.00, // Euros por Hectárea para 15 Lts/Ha
+            '20': 19.50, // Euros por Hectárea para 20 Lts/Ha
+            '25': 21.20  // Euros por Hectárea para 25 Lts/Ha
+        };
+
+        // Tasas de interés estandarizadas (anuales en porcentaje)
+        let STANDARD_COMMERCIAL_INTEREST_RATE = 36; // 36% anual para financiamiento con abono
+        let STANDARD_HIGH_INTEREST_RATE = 60;     // 60% anual para pago a final de cosecha
+        let DELAY_INTEREST_RATE = 24; // 24% anual por retraso
+
+        const FINANCING_PERCENTAGE = 0.55; // 55% del costo se financia
+        const INITIAL_DEPOSIT_PERCENTAGE = 0.45; // 45% de abono inicial
+
+        let currentSelectedService = null; // To hold the service data when calculating delay
+
+        // Función para formatear la moneda (siempre en EUR)
+        function formatCurrency(value) {
+            return `€ ${value.toFixed(2).replace('.', ',')}`;
+        }
+
+        // Función para formatear fechas a dd/mm/aaaa
+        function formatDateToDDMMYYYY(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString; // Return original if invalid date
+
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+        window.formatDateToDDMMYYYY = formatDateToDDMMYYYY; // Expose to global scope
+
+        // Función para cargar los valores desde localStorage
+        function loadValuesFromLocalStorage() {
+            const storedPrices = localStorage.getItem('BASE_PRICES_BY_MIX_VOLUME');
+            const storedCommercialRate = localStorage.getItem('STANDARD_COMMERCIAL_INTEREST_RATE');
+            const storedHighRate = localStorage.getItem('STANDARD_HIGH_INTEREST_RATE');
+            const storedDelayRate = localStorage.getItem('DELAY_INTEREST_RATE');
+
+            if (storedPrices) {
+                BASE_PRICES_BY_MIX_VOLUME = JSON.parse(storedPrices);
+            }
+            if (storedCommercialRate) {
+                STANDARD_COMMERCIAL_INTEREST_RATE = parseFloat(storedCommercialRate);
+            }
+            if (storedHighRate) {
+                STANDARD_HIGH_INTEREST_RATE = parseFloat(storedHighRate);
+            }
+            if (storedDelayRate) {
+                DELAY_INTEREST_RATE = parseFloat(storedDelayRate);
+            }
+        }
+
+        // Función para guardar los valores en localStorage
+        function saveValuesToLocalStorage() {
+            localStorage.setItem('BASE_PRICES_BY_MIX_VOLUME', JSON.stringify(BASE_PRICES_BY_MIX_VOLUME));
+            localStorage.setItem('STANDARD_COMMERCIAL_INTEREST_RATE', STANDARD_COMMERCIAL_INTEREST_RATE);
+            localStorage.setItem('STANDARD_HIGH_INTEREST_RATE', STANDARD_HIGH_INTEREST_RATE);
+            localStorage.setItem('DELAY_INTEREST_RATE', DELAY_INTEREST_RATE);
+        }
+
+        // Función para poblar los campos de administración con los valores actuales
+        function populateAdminInputs() {
+            document.getElementById('adminBase15').value = BASE_PRICES_BY_MIX_VOLUME['15'];
+            document.getElementById('adminBase20').value = BASE_PRICES_BY_MIX_VOLUME['20'];
+            document.getElementById('adminBase25').value = BASE_PRICES_BY_MIX_VOLUME['25'];
+            document.getElementById('adminCommercialRate').value = STANDARD_COMMERCIAL_INTEREST_RATE;
+            document.getElementById('adminHighRate').value = STANDARD_HIGH_INTEREST_RATE;
+            document.getElementById('adminDelayInterestRate').value = DELAY_INTEREST_RATE;
+        }
+
+        // Función para actualizar los valores desde los campos de administración
+        function updateAdminValues() {
+            BASE_PRICES_BY_MIX_VOLUME['15'] = parseFloat(document.getElementById('adminBase15').value) || BASE_PRICES_BY_MIX_VOLUME['15'];
+            BASE_PRICES_BY_MIX_VOLUME['20'] = parseFloat(document.getElementById('adminBase20').value) || BASE_PRICES_BY_MIX_VOLUME['20'];
+            BASE_PRICES_BY_MIX_VOLUME['25'] = parseFloat(document.getElementById('adminBase25').value) || BASE_PRICES_BY_MIX_VOLUME['25'];
+            STANDARD_COMMERCIAL_INTEREST_RATE = parseFloat(document.getElementById('adminCommercialRate').value) || STANDARD_COMMERCIAL_INTEREST_RATE;
+            STANDARD_HIGH_INTEREST_RATE = parseFloat(document.getElementById('adminHighRate').value) || STANDARD_HIGH_INTEREST_RATE;
+            DELAY_INTEREST_RATE = parseFloat(document.getElementById('adminDelayInterestRate').value) || DELAY_INTEREST_RATE;
+
+            saveValuesToLocalStorage(); // Save updated values to localStorage
+            calculateCostsAndDisplay(); // Call consolidated function
+        }
+        // Expose function to global scope
+        window.updateAdminValues = updateAdminValues;
+
+        // Función para calcular los meses entre dos fechas
+        function calculateMonthsBetweenDates(startDateStr, endDateStr) {
+            const startDate = new Date(startDateStr);
+            const endDate = new Date(endDateStr);
+
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                return NaN; // Invalid dates
+            }
+
+            // Calculate difference in days
+            const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+            // Convert milliseconds to days
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+            // Convert days to months using the average number of days in a month (30.4375 days)
+            return diffDays / 30.4375;
+        }
+
+        // Función para actualizar el campo de meses de financiamiento basado en las fechas
+        function updateFinancingMonthsBasedOnDates() {
+            const serviceDate = document.getElementById('serviceDate').value;
+            const estimatedPaymentDate = document.getElementById('estimatedPaymentDate').value;
+            const financingMonthsInput = document.getElementById('financingMonths');
+            const selectedScenario = document.querySelector('input[name="scenario"]:checked').value;
+
+            if (selectedScenario === 'contado') {
+                financingMonthsInput.value = 'N/A';
+            } else {
+                if (serviceDate && estimatedPaymentDate) {
+                    const months = calculateMonthsBetweenDates(serviceDate, estimatedPaymentDate);
+                    if (!isNaN(months)) {
+                        financingMonthsInput.value = months.toFixed(2); // Display with two decimals for precision
+                    } else {
+                        financingMonthsInput.value = ''; // Clear if dates are invalid
+                    }
+                } else {
+                    financingMonthsInput.value = ''; // Clear if dates are not set
+                }
+            }
+        }
+        // Expose function to global scope
+        window.updateFinancingMonthsBasedOnDates = updateFinancingMonthsBasedOnDates;
+
+
+        // Función principal de cálculo de costos
+        function calculateCosts() {
+            const hectares = parseFloat(document.getElementById('hectares').value);
+            const mixVolume = document.getElementById('mixVolume').value;
+            // Get financingMonths value, handle 'N/A'
+            const financingMonthsValue = document.getElementById('financingMonths').value;
+            let financingMonths = parseFloat(financingMonthsValue);
+
+            const basePricePerHa = BASE_PRICES_BY_MIX_VOLUME[mixVolume];
+
+            let isValid = true;
+            document.getElementById('hectaresError').textContent = '';
+            document.getElementById('financingMonthsError').textContent = '';
+
+            if (isNaN(hectares) || hectares <= 0) {
+                document.getElementById('hectaresError').textContent = 'El número de hectáreas debe ser un valor positivo.';
+                isValid = false;
+            }
+            // Only validate financingMonths if it's not 'N/A' and it's a number
+            if (financingMonthsValue !== 'N/A' && (isNaN(financingMonths) || financingMonths <= 0)) {
+                document.getElementById('financingMonthsError').textContent = 'Los meses para el pago deben ser un número positivo.';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                document.getElementById('resultsTableContainer').innerHTML = '';
+                return {}; // Return empty object if inputs are invalid
+            }
+
+            const monthlyCommercialRate = (STANDARD_COMMERCIAL_INTEREST_RATE / 100) / 12;
+            const monthlyHighRate = (STANDARD_HIGH_INTEREST_RATE / 100) / 12;
+
+            // --- Escenario 1: Pago de Contado ---
+            const totalContado = basePricePerHa * hectares;
+
+            // --- Escenario 2: Financiamiento (Abono 45%) ---
+            const totalServiceBaseForFinancing = basePricePerHa * hectares;
+            const initialDepositAmount = totalServiceBaseForFinancing * INITIAL_DEPOSIT_PERCENTAGE;
+            // Use the calculated financingMonths for future value calculation
+            const amountToFinance = totalServiceBaseForFinancing * FINANCING_PERCENTAGE;
+            const futureValueFinanciamiento = amountToFinance * Math.pow((1 + monthlyCommercialRate), financingMonths);
+            const totalFinanciamientoScenario = initialDepositAmount + futureValueFinanciamiento; // Total pagado en este escenario
+
+            // --- Escenario 3: Pago a Final de Cosecha ---
+            const totalServiceBaseForCosecha = basePricePerHa * hectares;
+            // Use the calculated financingMonths for future value calculation
+            const futureValueCosecha = totalServiceBaseForCosecha * Math.pow((1 + monthlyHighRate), financingMonths);
+
+            return {
+                basePricePerHa: basePricePerHa,
+                totalContado: totalContado,
+                initialDepositAmount: initialDepositAmount,
+                futureValueFinanciamiento: futureValueFinanciamiento,
+                totalFinanciamientoScenario: totalFinanciamientoScenario,
+                futureValueCosecha: futureValueCosecha,
+                hectares: hectares, // Pass hectares for summary calculation
+                mixVolume: mixVolume,
+                financingMonths: financingMonths // Pass the numeric value
+            };
+        }
+        // Expose function to global scope
+        window.calculateCosts = calculateCosts;
+
+
+        // Función para mostrar solo el escenario seleccionado en formato de tabla
+        function displaySelectedScenario() {
+            const calculatedData = calculateCosts();
+            const resultsTableContainer = document.getElementById('resultsTableContainer');
+            resultsTableContainer.innerHTML = ''; // Clear previous results
+
+            if (Object.keys(calculatedData).length === 0) { // Check if calculations were invalid
+                return;
+            }
+
+            const { basePricePerHa, totalContado, initialDepositAmount, futureValueFinanciamiento, totalFinanciamientoScenario, futureValueCosecha, hectares } = calculatedData;
+            const selectedScenario = document.querySelector('input[name="scenario"]:checked').value;
+
+            let tableHtml = `
+                <table class="budget-table">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>P. Unt. Ha.</th>
+                            <th>Monto Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if (selectedScenario === 'contado') {
+                tableHtml += `
+                    <tr>
+                        <td>Servicio de Fumigación (Contado)</td>
+                        <td>${formatCurrency(totalContado / hectares)}</td>
+                        <td>${formatCurrency(totalContado)}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Total a Pagar</strong></td>
+                        <td></td>
+                        <td><strong>${formatCurrency(totalContado)}</strong></td>
+                    </tr>
+                `;
+            } else if (selectedScenario === 'financiamiento') {
+                // Costo por hectárea para el abono inicial
+                const initialDepositPerHa = basePricePerHa * INITIAL_DEPOSIT_PERCENTAGE;
+                // Costo por hectárea para el pago final financiado (incluyendo intereses)
+                // Ensure futureValueFinanciamiento is a number before division
+                const financedPaymentPerHa = (futureValueFinanciamiento && hectares) ? futureValueFinanciamiento / hectares : 0;
+                // Suma de los costos por hectárea para el resumen
+                const totalCostPerHaFinanced = initialDepositPerHa + financedPaymentPerHa;
+
+
+                tableHtml += `
+                    <tr>
+                        <td>Abono Inicial (45%)</td>
+                        <td>${formatCurrency(initialDepositPerHa)}</td>
+                        <td>${formatCurrency(initialDepositAmount)}</td>
+                    </tr>
+                    <tr>
+                        <td>Pago Final (55% Financiado)</td>
+                        <td>${formatCurrency(financedPaymentPerHa)}</td>
+                        <td>${formatCurrency(futureValueFinanciamiento)}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Total a Pagar</strong></td>
+                        <td><strong>${formatCurrency(totalCostPerHaFinanced)}</strong></td>
+                        <td><strong>${formatCurrency(totalFinanciamientoScenario)}</strong></td>
+                    </tr>
+                `;
+                // Add mora note below the table for this scenario
+                tableHtml += `
+                    <tr>
+                        <td colspan="3" class="mora-note">Nota: En caso de mora en el pago final, se aplicarán cargos adicionales.</td>
+                    </tr>
+                `;
+
+            } else if (selectedScenario === 'cosecha') {
+                // Costo por hectárea para el pago a final de cosecha (incluyendo intereses)
+                // Ensure futureValueCosecha is a number before division
+                const totalCosechaPerHa = (futureValueCosecha && hectares) ? futureValueCosecha / hectares : 0;
+
+                tableHtml += `
+                    <tr>
+                        <td>Pago Único a Final de Cosecha</td>
+                        <td>${formatCurrency(totalCosechaPerHa)}</td>
+                        <td>${formatCurrency(futureValueCosecha)}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>MONTO ÚNICO A PAGAR AL FINAL DE COSECHA</strong></td>
+                        <td></td>
+                        <td><strong>${formatCurrency(futureValueCosecha)}</strong></td>
+                    </tr>
+                `;
+                // Add mora note below the table for this scenario
+                tableHtml += `
+                    <tr>
+                        <td colspan="3" class="mora-note">Nota: En caso de mora en el pago, se aplicarán cargos adicionales.</td>
+                    </tr>
+                `;
+            }
+
+            tableHtml += `
+                    </tbody>
+                </table>
+            `;
+            resultsTableContainer.innerHTML = tableHtml;
+
+            // Update print-only spans and header date with dd/mm/aaaa format
+            document.getElementById('printClientName').textContent = document.getElementById('clientName').value;
+            document.getElementById('printClientId').textContent = document.getElementById('clientId').value;
+            document.getElementById('printServiceDate').textContent = formatDateToDDMMYYYY(document.getElementById('serviceDate').value);
+            document.getElementById('printEstimatedPaymentDate').textContent = formatDateToDDMMYYYY(document.getElementById('estimatedPaymentDate').value);
+            document.getElementById('printHectares').textContent = document.getElementById('hectares').value;
+            document.getElementById('printMixVolume').textContent = document.getElementById('mixVolume').value;
+            document.getElementById('printFinancingMonths').textContent = document.getElementById('financingMonths').value;
+        }
+        // Expose function to global scope
+        window.displaySelectedScenario = displaySelectedScenario;
+
+        // Consolidated function to call when inputs change
+        function calculateCostsAndDisplay() {
+            updateFinancingMonthsBasedOnDates(); // Update months first
+            // No need to call calculateCosts here, it's called by displaySelectedScenario
+            displaySelectedScenario(); // Then calculate costs and display the scenario
+        }
+        window.calculateCostsAndDisplay = calculateCostsAndDisplay;
+
+        // Handler for date changes
+        function handleDateChange() {
+            calculateCostsAndDisplay();
+        }
+        window.handleDateChange = handleDateChange;
+
+        // Handler for scenario changes
+        function handleScenarioChange() {
+            calculateCostsAndDisplay();
+        }
+        window.handleScenarioChange = handleScenarioChange;
+
+
+        // --- Firebase Functions ---
+        async function saveService() {
+            if (!firebaseInitialized) {
+                showCustomMessage("Para guardar servicios, por favor, configura tu API Key de Firebase en el código HTML.");
+                return;
+            }
+
+            if (!window.db || !window.userId) {
+                console.error("Firebase is not initialized or user is not authenticated.");
+                showCustomMessage("Error: Firebase no está listo o el usuario no está autenticado. Por favor, recarga la página o verifica tu conexión.");
+                return;
+            }
+
+            const clientName = document.getElementById('clientName').value;
+            const clientId = document.getElementById('clientId').value;
+            const serviceDate = document.getElementById('serviceDate').value;
+            const estimatedPaymentDate = document.getElementById('estimatedPaymentDate').value;
+            const calculatedData = calculateCosts();
+            const selectedScenario = document.querySelector('input[name="scenario"]:checked').value;
+            const financingMonthsValue = document.getElementById('financingMonths').value; // Get the displayed value
+
+            if (!clientName || !clientId || !serviceDate || !estimatedPaymentDate || Object.keys(calculatedData).length === 0) {
+                showCustomMessage("Por favor, completa todos los campos de la oferta y realiza un cálculo antes de guardar.");
+                return;
+            }
+
+            let totalAmountToPay = 0;
+            let amountDueForPayment = 0; // New field for the amount subject to delay interest
+            let initialPaymentMade = 0; // New field to store the initial payment for delay calculation
+
+            if (selectedScenario === 'contado') {
+                totalAmountToPay = calculatedData.totalContado;
+                amountDueForPayment = calculatedData.totalContado; // Full amount for cash
+                initialPaymentMade = 0; // No initial payment for cash
+            } else if (selectedScenario === 'financiamiento') {
+                totalAmountToPay = calculatedData.totalFinanciamientoScenario;
+                amountDueForPayment = calculatedData.futureValueFinanciamiento; // Only the financed portion
+                initialPaymentMade = calculatedData.initialDepositAmount; // Initial deposit for financing
+            } else if (selectedScenario === 'cosecha') {
+                totalAmountToPay = calculatedData.totalCosecha; // This should be calculatedData.futureValueCosecha
+                amountDueForPayment = calculatedData.futureValueCosecha; // Full amount for harvest
+                initialPaymentMade = 0; // No initial payment for harvest
+            }
+
+            const serviceRecord = {
+                clientName: clientName,
+                clientId: clientId,
+                serviceDate: serviceDate,
+                estimatedPaymentDate: estimatedPaymentDate,
+                hectares: calculatedData.hectares,
+                mixVolume: calculatedData.mixVolume,
+                financingMonths: financingMonthsValue, // Save the displayed value ('N/A' or number)
+                selectedScenario: selectedScenario,
+                totalAmount: totalAmountToPay, // Overall total for the scenario
+                amountDueForPayment: amountDueForPayment, // Amount specifically for delay interest calculation
+                initialPaymentMade: initialPaymentMade, // Store initial payment
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const currentAppId = window.firebaseApp ? window.firebaseApp.options.projectId : 'default-fumigation-app-id';
+                console.log("Attempting to save service for userId:", window.userId, "in appId:", currentAppId);
+                const docRef = await addDoc(collection(window.db, `artifacts/${currentAppId}/users/${window.userId}/serviceRecords`), serviceRecord);
+                showCustomMessage("Servicio guardado con éxito. ID: " + docRef.id);
+                console.log("Service saved successfully with ID:", docRef.id);
+                // Clear form or provide feedback
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                showCustomMessage("Error al guardar el servicio: " + e.message);
+            }
+        }
+        // Expose function to global scope
+        window.saveService = saveService;
+
+
+        async function fetchServiceHistory() {
+            if (!firebaseInitialized) {
+                document.getElementById('serviceHistoryList').innerHTML = '<p class="text-center text-red-500">Para ver el historial, por favor, configura tu API Key de Firebase en el código HTML.</p>';
+                return;
+            }
+
+            if (!window.db || !window.userId) {
+                console.error("Firebase is not initialized or user is not authenticated.");
+                document.getElementById('serviceHistoryList').innerHTML = '<p class="text-center text-red-500">Error: No se pudo cargar el historial. Firebase no está listo o no autenticado.</p>';
+                return;
+            }
+
+            const historyListDiv = document.getElementById('serviceHistoryList');
+            historyListDiv.innerHTML = '<p class="text-center text-gray-500">Cargando historial...</p>';
+            console.log("Attempting to fetch service history for userId:", window.userId);
+
+            try {
+                const currentAppId = window.firebaseApp ? window.firebaseApp.options.projectId : 'default-fumigation-app-id';
+                const q = query(collection(window.db, `artifacts/${currentAppId}/users/${window.userId}/serviceRecords`), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                let historyHtml = '';
+
+                if (querySnapshot.empty) {
+                    historyHtml = '<p class="text-center text-gray-500">No hay servicios guardados aún.</p>';
+                    console.log("No service records found for userId:", window.userId);
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        historyHtml += `
+                            <div class="history-item">
+                                <div class="history-item-details">
+                                    <strong>Cliente:</strong> ${data.clientName} (${data.clientId})<br>
+                                    <strong>Fecha Servicio:</strong> ${formatDateToDDMMYYYY(data.serviceDate)}<br>
+                                    <strong>Monto Total:</strong> ${formatCurrency(data.totalAmount)} (${data.selectedScenario})<br>
+                                    <strong>Meses para el Pago:</strong> ${data.financingMonths}
+                                </div>
+                                <div class="history-actions">
+                                    <button onclick="selectServiceForDelayCalculation('${doc.id}')">Calcular Retraso</button>
+                                    <button class="delete-button" onclick="deleteService('${doc.id}', '${data.clientName}')">Eliminar</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    console.log(`Fetched ${querySnapshot.size} service records for userId:`, window.userId);
+                }
+                historyListDiv.innerHTML = historyHtml;
+            } catch (e) {
+                console.error("Error fetching documents: ", e);
+                historyListDiv.innerHTML = `<p class="text-center text-red-500">Error al cargar el historial: ${e.message}</p>`;
+            }
+        }
+        // Expose function to global scope
+        window.fetchServiceHistory = fetchServiceHistory;
+
+
+        async function selectServiceForDelayCalculation(serviceId) {
+            if (!firebaseInitialized) {
+                showCustomMessage("Para calcular retrasos, por favor, configura tu API Key de Firebase en el código HTML.");
+                return;
+            }
+
+            if (!window.db || !window.userId) {
+                console.error("Firebase is not initialized or user is not authenticated.");
+                showCustomMessage("Error: Firebase no está listo. Por favor, recarga la página.");
+                return;
+            }
+
+            try {
+                const currentAppId = window.firebaseApp ? window.firebaseApp.options.projectId : 'default-fumigation-app-id';
+                const docRef = doc(window.db, `artifacts/${currentAppId}/users/${window.userId}/serviceRecords`, serviceId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    currentSelectedService = { id: docSnap.id, ...docSnap.data() };
+
+                    // Populate fields in the delay calculation section
+                    document.getElementById('delayClientName').textContent = currentSelectedService.clientName;
+                    document.getElementById('delayClientId').textContent = currentSelectedService.clientId;
+                    document.getElementById('delayServiceDate').textContent = formatDateToDDMMYYYY(currentSelectedService.serviceDate);
+                    document.getElementById('delayEstimatedPaymentDate').textContent = formatDateToDDMMYYYY(currentSelectedService.estimatedPaymentDate);
+                    document.getElementById('delayOriginalAmountDue').textContent = formatCurrency(currentSelectedService.amountDueForPayment);
+                    document.getElementById('reportIssueDatePrint').textContent = formatDateToDDMMYYYY(new Date().toISOString().slice(0,10)); // Current date
+
+                    // Show the delay calculation section
+                    document.getElementById('delayCalculationSection').style.display = 'block';
+                    document.getElementById('delayCalculationResults').style.display = 'none'; // Hide results until calculated
+                    document.getElementById('actualPaymentDate').value = ''; // Clear previous date
+                    document.getElementById('printReportButton').style.display = 'none'; // Hide print button initially
+
+                    // Scroll to the delay calculation section
+                    document.getElementById('delayCalculationSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    // Prompt for actual payment date
+                    showCustomMessageWithInput("Por favor, introduce la fecha real de pago para calcular el retraso:", "date", (actualPaymentDate) => {
+                        if (actualPaymentDate) {
+                            // Now that we have the actual payment date, calculate and display
+                            calculateDelayInterest(actualPaymentDate);
+                        } else {
+                            showCustomMessage("Cálculo de retraso cancelado. No se proporcionó la fecha real de pago.");
+                            document.getElementById('delayCalculationSection').style.display = 'none'; // Hide section if cancelled
+                        }
+                    });
+
+                } else {
+                    showCustomMessage("No se encontró el servicio.");
+                }
+            } catch (e) {
+                console.error("Error fetching service for delay calculation: ", e);
+                showCustomMessage("Error al cargar el servicio para cálculo de retraso: " + e.message);
+            }
+        }
+        // Expose function to global scope
+        window.selectServiceForDelayCalculation = selectServiceForDelayCalculation;
+
+
+        function calculateDelayInterest(actualPaymentDateStr) {
+            if (!currentSelectedService) {
+                showCustomMessage("Error interno: No hay servicio seleccionado para calcular el retraso.");
+                return;
+            }
+
+            if (!actualPaymentDateStr) {
+                document.getElementById('delayCalculationResults').style.display = 'none';
+                document.getElementById('printReportButton').style.display = 'none';
+                return;
+            }
+
+            const estimatedDate = new Date(currentSelectedService.estimatedPaymentDate);
+            const actualDate = new Date(actualPaymentDateStr);
+
+            let diffDays = 0;
+            let delayMonths = 0;
+            let additionalInterest = 0;
+            let newTotalDueWithDelay = currentSelectedService.amountDueForPayment;
+            let overallTotalCostWithDelay = currentSelectedService.initialPaymentMade + newTotalDueWithDelay;
+            let newPricePerHectare = overallTotalCostWithDelay / currentSelectedService.hectares;
+
+            if (actualDate > estimatedDate) {
+                diffDays = Math.abs(actualDate - estimatedDate) / (1000 * 60 * 60 * 24); // Exact days difference
+                delayMonths = diffDays / 30.4375; // Convert days to months
+                const monthlyDelayRate = (DELAY_INTEREST_RATE / 100) / 12;
+                additionalInterest = currentSelectedService.amountDueForPayment * monthlyDelayRate * delayMonths;
+                newTotalDueWithDelay = currentSelectedService.amountDueForPayment + additionalInterest;
+                overallTotalCostWithDelay = currentSelectedService.initialPaymentMade + newTotalDueWithDelay;
+                newPricePerHectare = overallTotalCostWithDelay / currentSelectedService.hectares;
+            }
+
+            document.getElementById('actualPaymentDate').value = actualPaymentDateStr; // Set the input field
+            document.getElementById('calculatedDelayMonths').textContent = delayMonths.toFixed(2);
+            document.getElementById('additionalInterestAmount').textContent = formatCurrency(additionalInterest);
+            document.getElementById('newTotalWithDelay').textContent = formatCurrency(newTotalDueWithDelay);
+            document.getElementById('newPricePerHectareWithDelay').textContent = formatCurrency(newPricePerHectare);
+            document.getElementById('delayDaysCount').textContent = diffDays.toFixed(0); // Update the days in the note
+            document.getElementById('delayCalculationResults').style.display = 'block';
+            document.getElementById('printReportButton').style.display = 'inline-block'; // Show print button
+        }
+        // Expose function to global scope
+        window.calculateDelayInterest = calculateDelayInterest;
+
+        // Function to generate the Delay Report PDF
+        function generateDelayReportPDF() {
+            console.log("generateDelayReportPDF function called.");
+            if (!currentSelectedService) {
+                showCustomMessage("No hay un servicio seleccionado para generar el reporte de retraso.");
+                console.error("No currentSelectedService for delay report.");
+                return;
+            }
+
+            // Get current calculation results from displayed elements
+            const actualPaymentDate = document.getElementById('actualPaymentDate').value;
+            const calculatedDelayMonths = document.getElementById('calculatedDelayMonths').textContent;
+            const additionalInterestAmount = document.getElementById('additionalInterestAmount').textContent;
+            const newTotalWithDelay = document.getElementById('newTotalWithDelay').textContent;
+            const newPricePerHectareWithDelay = document.getElementById('newPricePerHectareWithDelay').textContent;
+            const delayDaysCount = document.getElementById('delayDaysCount').textContent;
+
+            // Create a temporary div to construct the PDF content with proper styling
+            const pdfContentDiv = document.createElement('div');
+            pdfContentDiv.style.fontFamily = 'Inter, sans-serif';
+            pdfContentDiv.style.color = '#000';
+            pdfContentDiv.style.padding = '1rem';
+            pdfContentDiv.style.backgroundColor = '#fff';
+            pdfContentDiv.style.lineHeight = '1.4';
+            pdfContentDiv.style.fontSize = '0.9rem';
+            console.log("pdfContentDiv for delay report created with inline styles.");
+
+            // Add header
+            pdfContentDiv.innerHTML += `
+                <div style="text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #2c5282;">
+                    <h1 style="font-size: 1.8rem; font-weight: 700; color: #2c5282; margin-bottom: 0.5rem;">Reporte de Cálculo de Retraso de Pago</h1>
+                    <p style="font-size: 1rem; color: #4a5568;">AERO SERVICES Venezuela</p>
+                    <p style="font-size: 0.9rem; color: #666;">Fecha de Emisión: ${formatDateToDDMMYYYY(new Date().toISOString().slice(0,10))}</p>
+                </div>
+            `;
+            console.log("Delay report header added with inline styles.");
+
+            // Add service info
+            pdfContentDiv.innerHTML += `<h2 style="font-size: 1.3rem; font-weight: 600; color: #2c5282; margin-top: 1rem; margin-bottom: 0.75rem; text-align: center; padding-bottom: 0.25rem; border-bottom: 1px solid #e2e8f0;">Información del Cliente y Servicio</h2>`;
+            pdfContentDiv.innerHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                    <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Nombre del Cliente:</label>
+                    <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${currentSelectedService.clientName}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                    <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Número de Cédula/RIF:</label>
+                    <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${currentSelectedService.clientId}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                    <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Fecha de Prestación del Servicio:</label>
+                    <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${formatDateToDDMMYYYY(currentSelectedService.serviceDate)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                    <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Fecha Estimada de Pago:</label>
+                    <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${formatDateToDDMMYYYY(currentSelectedService.estimatedPaymentDate)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                    <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Monto Original Adeudado:</label>
+                    <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${formatCurrency(currentSelectedService.amountDueForPayment)}</span>
+                </div>
+            `;
+            console.log("Delay report service info added with inline styles.");
+
+            // Add delay calculation results
+            pdfContentDiv.innerHTML += `<h2 style="font-size: 1.3rem; font-weight: 600; color: #2c5282; margin-top: 1rem; margin-bottom: 0.75rem; text-align: center; padding-bottom: 0.25rem; border-bottom: 1px solid #e2e8f0;">Detalle del Cálculo por Retraso</h2>`;
+            pdfContentDiv.innerHTML += `
+                <div style="background-color: #f0f4f8; padding: 1rem; border-radius: 8px; margin-top: 1rem; border: 1px solid #e2e8f0;">
+                    <p style="margin-bottom: 0.5rem; font-size: 1.05rem; color: #000;">Fecha Real de Pago: <span style="font-weight: 700; color: #000;">${formatDateToDDMMYYYY(actualPaymentDate)}</span></p>
+                    <p style="margin-bottom: 0.5rem; font-size: 1.05rem; color: #000;">Meses de Retraso Calculados: <span style="font-weight: 700; color: #000;">${calculatedDelayMonths}</span></p>
+                    <p style="margin-bottom: 0.5rem; font-size: 1.05rem; color: #000;">Interés Adicional por Retraso: <span style="font-weight: 700; color: #000;">${additionalInterestAmount}</span></p>
+                    <p style="margin-bottom: 0.5rem; font-size: 1.05rem; color: #000;"><strong>Nuevo Monto Total Adeudado con Retraso: <span style="font-weight: 700; color: #000;">${newTotalWithDelay}</span></strong></p>
+                    <p style="margin-bottom: 0.5rem; font-size: 1.05rem; color: #000;"><strong>Costo por Hectárea con Retraso (Total): <span style="font-weight: 700; color: #000;">${newPricePerHectareWithDelay}</span></strong></p>
+                    <p style="font-size: 0.9rem; color: #000; margin-top: 1rem; text-align: justify; padding-top: 0.5rem; border-top: 1px dashed #e2e8f0;">Nota: Se está efectuando un cálculo por retraso de <span style="font-weight: 700; color: #000;">${delayDaysCount}</span> días desde la fecha convenida de pago inicialmente al financiamiento.</p>
+                </div>
+            `;
+            console.log("Delay report calculation results added with inline styles.");
+
+            // Set up html2pdf options
+            const options = {
+                margin: 0.5,
+                filename: `Reporte_Retraso_${currentSelectedService.clientName.replace(/\s/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    logging: true,
+                    dpi: 192,
+                    letterRendering: true,
+                    useCORS: true, // Added for cross-origin images
+                    allowTaint: true // Added as fallback for cross-origin images
+                },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            console.log("html2pdf options for delay report set.");
+
+            // Generate PDF
+            try {
+                showCustomMessage("Generando PDF del reporte de retraso... Por favor, espera.");
+                html2pdf().from(pdfContentDiv).set(options).save().then(() => {
+                    console.log("Delay report PDF generated and saved successfully.");
+                    hideConfirmModal();
+                }).catch(error => {
+                    console.error("Error during delay report PDF generation:", error);
+                    showCustomMessage("Error al generar el PDF del reporte de retraso: " + error.message);
+                    hideConfirmModal();
+                });
+            } catch (error) {
+                console.error("Error calling html2pdf for delay report:", error);
+                showCustomMessage("Error inesperado al iniciar la generación del PDF del reporte de retraso: " + error.message);
+                hideConfirmModal();
+            }
+        }
+        window.generateDelayReportPDF = generateDelayReportPDF;
+
+
+        // Function to generate the Budget Report PDF
+        function generateBudgetPDF() {
+            console.log("generateBudgetPDF function called.");
+
+            const clientName = document.getElementById('clientName').value;
+            const clientId = document.getElementById('clientId').value;
+            const serviceDate = document.getElementById('serviceDate').value;
+            const estimatedPaymentDate = document.getElementById('estimatedPaymentDate').value;
+            const hectares = document.getElementById('hectares').value;
+            const mixVolume = document.getElementById('mixVolume').value;
+            const financingMonths = document.getElementById('financingMonths').value;
+
+            if (!clientName || !clientId || !serviceDate || !estimatedPaymentDate || !hectares || !mixVolume) {
+                showCustomMessage("Por favor, completa todos los campos de la oferta y realiza un cálculo antes de generar el PDF.");
+                console.error("Missing required data for budget PDF.");
+                return;
+            }
+
+            const calculatedData = calculateCosts();
+            if (Object.keys(calculatedData).length === 0) {
+                showCustomMessage("Por favor, realiza un cálculo válido antes de generar el PDF del presupuesto.");
+                console.error("Invalid calculated data for budget PDF.");
+                return;
+            }
+            const { totalContado, initialDepositAmount, futureValueFinanciamiento, totalFinanciamientoScenario, futureValueCosecha } = calculatedData;
+            const selectedScenario = document.querySelector('input[name="scenario"]:checked').value;
+
+
+            // Create a temporary div to construct the PDF content with inline styling
+            const pdfContentDiv = document.createElement('div');
+            pdfContentDiv.style.fontFamily = 'Inter, sans-serif';
+            pdfContentDiv.style.color = '#000';
+            pdfContentDiv.style.padding = '1rem';
+            pdfContentDiv.style.backgroundColor = '#fff';
+            pdfContentDiv.style.lineHeight = '1.4';
+            pdfContentDiv.style.fontSize = '0.9rem';
+            console.log("pdfContentDiv created with inline styles.");
+
+            // Add header for PDF
+            pdfContentDiv.innerHTML += `
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #2c5282;">
+                    <div style="flex-shrink: 0;">
+                        <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="AERO SERVICES Logo" style="height: 70px; width: auto;">
+                    </div>
+                    <div style="text-align: right; flex-grow: 1;">
+                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #000; margin-bottom: 0.25rem;">Presupuesto de Servicios Aéreos con Drone</h1>
+                        <p style="font-size: 0.9rem; color: #000; margin-bottom: 0.15rem;">Fecha de Emisión: <span style="color: #000;">${formatDateToDDMMYYYY(new Date().toISOString().slice(0,10))}</span></p>
+                    </div>
+                </div>
+            `;
+            console.log("PDF header added with inline styles.");
+
+            // Add main section title
+            pdfContentDiv.innerHTML += `<h2 style="font-size: 1.3rem; font-weight: 600; color: #2c5282; margin-top: 1rem; margin-bottom: 0.75rem; text-align: center; padding-bottom: 0.25rem; border-bottom: 1px solid #e2e8f0;">Inversión en Servicios Aéreos con Drone</h2>`;
+            pdfContentDiv.innerHTML += `<p style="text-align: center; font-size: 1rem; color: #000; margin-bottom: 1rem;">Presupuesto por Hectárea (Ha.)</p>`;
+            console.log("Main section title and subtitle added.");
+
+            // Add offer section
+            pdfContentDiv.innerHTML += `
+                <div style="margin-top: 1.5rem; padding: 1rem; background-color: #f0fdf4; border-radius: 8px; border: 1px solid #d1fae5; color: #000;">
+                    <p style="margin-bottom: 0.75rem; line-height: 1.5;">Por medio del presente, <strong>AERO SERVICES Venezuela</strong> hace entrega de la oferta de servicios de fumigación con las siguientes condiciones:</p>
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                        <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Nombre del Cliente:</label>
+                        <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${clientName}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                        <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Número de Cédula/RIF:</label>
+                        <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${clientId}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                        <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Fecha de Prestación del Servicio:</label>
+                        <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${formatDateToDDMMYYYY(serviceDate)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                        <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Fecha Estimada de Pago del Servicio:</label>
+                        <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${formatDateToDDMMYYYY(estimatedPaymentDate)}</span>
+                    </div>
+                </div>
+            `;
+            console.log("Offer section added with dynamic data and inline styles.");
+
+            // Add main input values
+            pdfContentDiv.innerHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem; margin-top: 1rem;">
+                    <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Hectáreas a Fumigar:</label>
+                    <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${hectares}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                    <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Volumen de Mezcla (Lts/Ha):</label>
+                    <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${mixVolume} Lts/Ha</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
+                    <label style="font-weight: 600; color: #000; flex-basis: 45%; text-align: left; font-size: 0.9rem;">Meses para el Pago:</label>
+                    <span style="flex-basis: 50%; text-align: right; color: #000; font-size: 0.9rem;">${financingMonths}</span>
+                </div>
+            `;
+            console.log("Main input values added with inline styles.");
+
+            // Construct the budget table HTML directly
+            let tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #fff; border: 1px solid #e2e8f0;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem; background-color: #f0f4f8; font-weight: 700;">Descripción</th>
+                            <th style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem; background-color: #f0f4f8; font-weight: 700;">P. Unt. Ha.</th>
+                            <th style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem; background-color: #f0f4f8; font-weight: 700;">Monto Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if (selectedScenario === 'contado') {
+                tableHtml += `
+                    <tr>
+                        <td style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">Servicio de Fumigación (Contado)</td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">${formatCurrency(totalContado / hectares)}</td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">${formatCurrency(totalContado)}</td>
+                    </tr>
+                    <tr style="background-color: #e0f2fe; font-weight: 700; color: #000; font-size: 1rem;">
+                        <td style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #e2e8f0;"><strong>Total a Pagar</strong></td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0;"></td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0;"><strong>${formatCurrency(totalContado)}</strong></td>
+                    </tr>
+                `;
+            } else if (selectedScenario === 'financiamiento') {
+                const initialDepositPerHa = calculatedData.basePricePerHa * INITIAL_DEPOSIT_PERCENTAGE;
+                const financedPaymentPerHa = (calculatedData.futureValueFinanciamiento && hectares) ? calculatedData.futureValueFinanciamiento / hectares : 0;
+
+                tableHtml += `
+                    <tr>
+                        <td style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">Abono Inicial (45%)</td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">${formatCurrency(initialDepositPerHa)}</td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">${formatCurrency(initialDepositAmount)}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">Pago Final (55% Financiado)</td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">${formatCurrency(financedPaymentPerHa)}</td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">${formatCurrency(futureValueFinanciamiento)}</td>
+                    </tr>
+                    <tr style="background-color: #e0f2fe; font-weight: 700; color: #000; font-size: 1rem;">
+                        <td style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #e2e8f0;"><strong>Total a Pagar</strong></td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0;"><strong>${formatCurrency(initialDepositPerHa + financedPaymentPerHa)}</strong></td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0;"><strong>${formatCurrency(totalFinanciamientoScenario)}</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-size: 0.8rem; color: #000; padding-top: 0.25rem; font-style: italic; text-align: right; border-top: 1px dashed #e2e8f0; border-left: none; border-right: none; border-bottom: none;">Nota: En caso de mora en el pago final, se aplicarán cargos adicionales.</td>
+                    </tr>
+                `;
+            } else if (selectedScenario === 'cosecha') {
+                const totalCosechaPerHa = (futureValueCosecha && hectares) ? futureValueCosecha / hectares : 0;
+
+                tableHtml += `
+                    <tr>
+                        <td style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">Pago Único a Final de Cosecha</td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">${formatCurrency(totalCosechaPerHa)}</td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0; color: #000; font-size: 0.9rem;">${formatCurrency(futureValueCosecha)}</td>
+                    </tr>
+                    <tr style="background-color: #e0f2fe; font-weight: 700; color: #000; font-size: 1rem;">
+                        <td style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #e2e8f0;"><strong>MONTO ÚNICO A PAGAR AL FINAL DE COSECHA</strong></td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0;"></td>
+                        <td style="padding: 0.5rem 0.6rem; text-align: right; border: 1px solid #e2e8f0;"><strong>${formatCurrency(futureValueCosecha)}</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-size: 0.8rem; color: #000; padding-top: 0.25rem; font-style: italic; text-align: right; border-top: 1px dashed #e2e8f0; border-left: none; border-right: none; border-bottom: none;">Nota: En caso de mora en el pago, se aplicarán cargos adicionales.</td>
+                    </tr>
+                `;
+            }
+
+            tableHtml += `
+                    </tbody>
+                </table>
+            `;
+            pdfContentDiv.innerHTML += tableHtml;
+            console.log("Results table added with inline styles.");
+
+            // Add notes section
+            pdfContentDiv.innerHTML += `
+                <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #e2e8f0;">
+                    <h2 style="font-size: 1.1rem; font-weight: 600; color: #2c5282; margin-bottom: 0.5rem; text-align: center;">Consideraciones Importantes:</h2>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="margin-bottom: 0.2rem; color: #000; line-height: 1.3; display: flex; align-items: flex-start; font-size: 0.75rem;">
+                            <span style="margin-right: 0.3rem; flex-shrink: 0; color: #2c5282;">✅</span>
+                            <span>El precio base por hectárea varía según el volumen de mezcla seleccionado.</span>
+                        </li>
+                        <li style="margin-bottom: 0.2rem; color: #000; line-height: 1.3; display: flex; align-items: flex-start; font-size: 0.75rem;">
+                            <span style="margin-right: 0.3rem; flex-shrink: 0; color: #2c5282;">✅</span>
+                            <span>Suministramos la <strong>Nivelación del pH</strong> en el costo de nuestros servicios.</span>
+                        </li>
+                        <li style="margin-bottom: 0.2rem; color: #000; line-height: 1.3; display: flex; align-items: flex-start; font-size: 0.75rem;">
+                            <span style="margin-right: 0.3rem; flex-shrink: 0; color: #2c5282;">✅</span>
+                            <span>Nuestros precios <strong>no incluyen IVA</strong>.</span>
+                        </li>
+                        <li style="margin-bottom: 0.2rem; color: #000; line-height: 1.3; display: flex; align-items: flex-start; font-size: 0.75rem;">
+                            <span style="margin-right: 0.3rem; flex-shrink: 0; color: #2c5282;">✅</span>
+                            <span>Montos aplican para el pago €. En Bolívares, el monto de divisas a cancelar se regirá por la <strong>tasa</strong> del Euro (€) emitida por el Banco Central de Venezuela (BCV) para la fecha del pago.</span>
+                        </li>
+                        <li style="margin-bottom: 0.2rem; color: #000; line-height: 1.3; display: flex; align-items: flex-start; font-size: 0.75rem;">
+                            <span style="margin-right: 0.3rem; flex-shrink: 0; color: #2c5282;">✅</span>
+                            <span>Remita el comprobante de pago a <strong>nuestra</strong> línea de atención al cliente <strong>(0424) 405-4139 vía WhatsApp</strong> y a nuestro email: <strong>aeroservices.vzla@gmail.com</strong> a fin de hacerle llegar su estatus de cuenta.</span>
+                        </li>
+                    </ul>
+                </div>
+            `;
+            console.log("Notes section added with inline styles.");
+
+            // Add footer
+            pdfContentDiv.innerHTML += `
+                <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.8rem; color: #000;">
+                    <div style="margin-bottom: 0.3rem; font-style: italic; color: #000;">
+                        <p>No fumigamos</p>
+                        <p><strong>Gestionamos Calidad!</strong></p>
+                    </div>
+                    <p>&copy; 2025 AERO SERVICES Venezuela. Todos los derechos reservados.</p>
+                </div>
+            `;
+            console.log("PDF footer added with inline styles.");
+
+            // Set up html2pdf options
+            const options = {
+                margin: 0.5, // Margins in inches
+                filename: `Presupuesto_AERO_SERVICES_${clientName.replace(/\s/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    logging: true,
+                    dpi: 192,
+                    letterRendering: true,
+                    useCORS: true, // Added for cross-origin images
+                    allowTaint: true // Added as fallback for cross-origin images
+                },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            console.log("html2pdf options set.");
+
+            // Generate PDF
+            try {
+                showCustomMessage("Generando PDF del presupuesto... Por favor, espera.");
+                html2pdf().from(pdfContentDiv).set(options).save().then(() => {
+                    console.log("PDF generated and saved successfully.");
+                    hideConfirmModal();
+                }).catch(error => {
+                    console.error("Error during PDF generation:", error);
+                    showCustomMessage("Error al generar el PDF del presupuesto: " + error.message);
+                    hideConfirmModal();
+                });
+            } catch (error) {
+                console.error("Error calling html2pdf:", error);
+                showCustomMessage("Error inesperado al iniciar la generación del PDF: " + error.message);
+                hideConfirmModal();
+            }
+        }
+        window.generateBudgetPDF = generateBudgetPDF;
+
+
+        // --- Page Navigation ---
+        function showMainCalculatorPage() {
+            document.getElementById('auth-page').style.display = 'none';
+            document.getElementById('main-calculator-page').style.display = 'block';
+            document.getElementById('history-page').style.display = 'none';
+            document.getElementById('delayCalculationSection').style.display = 'none'; // Hide delay section when returning
+        }
+        // Expose function to global scope
+        window.showMainCalculatorPage = showMainCalculatorPage;
+
+
+        async function showHistoryPage() {
+            document.getElementById('auth-page').style.display = 'none';
+            document.getElementById('main-calculator-page').style.display = 'none';
+            document.getElementById('history-page').style.display = 'block';
+            document.getElementById('delayCalculationSection').style.display = 'none'; // Hide delay section initially when showing history
+            await fetchServiceHistory(); // Load history when showing the page
+        }
+        // Expose function to global scope
+        window.showHistoryPage = showHistoryPage;
+
+        function showAuthPage() {
+            document.getElementById('auth-page').style.display = 'block';
+            document.getElementById('main-calculator-page').style.display = 'none';
+            document.getElementById('history-page').style.display = 'none';
+            document.getElementById('delayCalculationSection').style.display = 'none';
+        }
+        window.showAuthPage = showAuthPage;
+
+        function showLoginPage() {
+            // Currently, auth-page only has login/signup. If separate forms are added, this would toggle them.
+            showAuthPage();
+        }
+        window.showLoginPage = showLoginPage;
+
+        function showSignupPage() {
+            // Currently, auth-page only has login/signup. If separate forms are added, this would toggle them.
+            showAuthPage();
+        }
+        window.signupUser = signupUser;
+
+
+        // --- Custom Modal Functions ---
+        let onConfirmCallback = null;
+        let onInputCallback = null; // New callback for input modal
+
+        function showConfirmModal(message, onConfirm) {
+            document.getElementById('modalTitle').textContent = "Confirmar Acción"; // Default title for confirmation
+            document.getElementById('modalMessage').textContent = message;
+            onConfirmCallback = onConfirm;
+            document.getElementById('modalConfirmBtn').style.display = 'inline-block'; // Show confirm button
+            document.getElementById('modalCancelBtn').textContent = 'Cancelar'; // Reset cancel button text
+            document.getElementById('confirmModalOverlay').style.display = 'flex';
+
+            // Hide input field if it was previously shown
+            const modalInput = document.getElementById('modalInput');
+            if (modalInput) {
+                modalInput.style.display = 'none';
+                modalInput.value = ''; // Clear value
+            }
+        }
+
+        // New function for modal with input
+        function showCustomMessageWithInput(message, inputType, onInputConfirm) {
+            document.getElementById('modalTitle').textContent = "Entrada Requerida";
+            document.getElementById('modalMessage').textContent = message;
+            onInputCallback = onInputConfirm; // Set the input callback
+
+            let modalInput = document.getElementById('modalInput');
+            if (!modalInput) {
+                // Create input element if it doesn't exist
+                modalInput = document.createElement('input');
+                modalInput.setAttribute('id', 'modalInput');
+                modalInput.className = 'w-full p-2 border border-gray-300 rounded-md mt-4 mb-4 text-center';
+                document.querySelector('.modal-content').insertBefore(modalInput, document.querySelector('.modal-buttons'));
+            }
+            modalInput.setAttribute('type', inputType);
+            modalInput.style.display = 'block';
+            modalInput.value = ''; // Clear value
+
+            document.getElementById('modalConfirmBtn').style.display = 'inline-block';
+            document.getElementById('modalCancelBtn').textContent = 'Cancelar';
+            document.getElementById('confirmModalOverlay').style.display = 'flex';
+        }
+        window.showCustomMessageWithInput = showCustomMessageWithInput; // Expose to global scope
+
+
+        function hideConfirmModal() {
+            document.getElementById('confirmModalOverlay').style.display = 'none';
+            onConfirmCallback = null; // Clear the callback
+            onInputCallback = null; // Clear the input callback
+            const modalInput = document.getElementById('modalInput');
+            if (modalInput) {
+                modalInput.style.display = 'none'; // Hide input field
+                modalInput.value = ''; // Clear value
+            }
+        }
+
+        // Attach event listeners for modal buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+                if (onConfirmCallback) {
+                    onConfirmCallback();
+                } else if (onInputCallback) {
+                    const inputVal = document.getElementById('modalInput').value;
+                    onInputCallback(inputVal);
+                }
+                hideConfirmModal();
+            });
+
+            document.getElementById('modalCancelBtn').addEventListener('click', () => {
+                hideConfirmModal();
+            });
+        });
+
+        // Function to show a simple message (replaces alert)
+        function showCustomMessage(message) {
+            document.getElementById('modalTitle').textContent = "Información";
+            document.getElementById('modalMessage').textContent = message;
+            onConfirmCallback = null; // No action on confirm for simple messages
+            onInputCallback = null; // No input action for simple messages
+            document.getElementById('modalConfirmBtn').style.display = 'none'; // Hide confirm button
+            document.getElementById('modalCancelBtn').textContent = 'Cerrar'; // Change cancel to close
+            document.getElementById('confirmModalOverlay').style.display = 'flex';
+
+            // Hide input field if it was previously shown
+            const modalInput = document.getElementById('modalInput');
+            if (modalInput) {
+                modalInput.style.display = 'none';
+                modalInput.value = ''; // Clear value
+            }
+        }
+        window.showCustomMessage = showCustomMessage; // Expose to global scope
+
+        // --- Delete Service Function ---
+        async function deleteService(serviceId, clientName) {
+            if (!firebaseInitialized) {
+                showCustomMessage("Para eliminar servicios, por favor, configura tu API Key de Firebase en el código HTML.");
+                return;
+            }
+
+            showConfirmModal(`¿Estás seguro de que deseas eliminar el servicio de ${clientName}? Esta acción no se puede deshacer.`, async () => {
+                if (!window.db || !window.userId) {
+                    console.error("Firebase is not initialized or user is not authenticated.");
+                    showCustomMessage("Error: Firebase no está listo. Por favor, recarga la página.");
+                    return;
+                }
+                try {
+                    const currentAppId = window.firebaseApp ? window.firebaseApp.options.projectId : 'default-fumigation-app-id';
+                    console.log("Attempting to delete service with ID:", serviceId, "for userId:", window.userId);
+                    await deleteDoc(doc(window.db, `artifacts/${currentAppId}/users/${window.userId}/serviceRecords`, serviceId));
+                    showCustomMessage(`Servicio de ${clientName} eliminado con éxito.`);
+                    console.log("Service deleted successfully.");
+                    fetchServiceHistory(); // Refresh the list
+                }
+                catch (e) {
+                    console.error("Error removing document: ", e);
+                    showCustomMessage("Error al eliminar el servicio: " + e.message);
+                }
+            });
+        }
+        window.deleteService = deleteService; // Expose to global scope
+
+        // --- Export/Import Functions ---
+        async function exportData() {
+            if (!firebaseInitialized || !window.db || !window.userId) {
+                showCustomMessage("Firebase no está listo o no autenticado para exportar datos.");
+                return;
+            }
+            try {
+                const currentAppId = window.firebaseApp ? window.firebaseApp.options.projectId : 'default-fumigation-app-id';
+                const q = query(collection(window.db, `artifacts/${currentAppId}/users/${window.userId}/serviceRecords`));
+                const querySnapshot = await getDocs(q);
+                const dataToExport = [];
+                querySnapshot.forEach((doc) => {
+                    dataToExport.push(doc.data());
+                });
+
+                const jsonString = JSON.stringify(dataToExport, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `aero-services-data-${window.userId}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showCustomMessage("Historial exportado con éxito.");
+            } catch (e) {
+                console.error("Error exporting data:", e);
+                showCustomMessage("Error al importar el historial: " + e.message);
+            }
+        }
+        window.exportData = exportData;
+
+        async function importData(event) {
+            if (!firebaseInitialized || !window.db || !window.userId) {
+                showCustomMessage("Firebase no está listo o no autenticado para importar datos.");
+                return;
+            }
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (!Array.isArray(importedData)) {
+                        showCustomMessage("El archivo importado no es un formato de historial válido (debe ser un array de objetos).");
+                        return;
+                    }
+
+                    const currentAppId = window.firebaseApp ? window.firebaseApp.options.projectId : 'default-fumigation-app-id';
+                    let importedCount = 0;
+                    for (const record of importedData) {
+                        // Remove any potential ID field if present, as Firestore will generate a new one
+                        const { id, ...recordWithoutId } = record;
+                        await addDoc(collection(window.db, `artifacts/${currentAppId}/users/${window.userId}/serviceRecords`), recordWithoutId);
+                        importedCount++;
+                    }
+                    showCustomMessage(`Se importaron ${importedCount} servicios con éxito.`);
+                    fetchServiceHistory(); // Refresh the list after import
+                } catch (error) {
+                    console.error("Error importing data:", error);
+                    showCustomMessage("Error al importar el historial: " + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        window.importData = importData;
+
+        // --- New Authentication Functions ---
+        async function loginUser() {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+
+            if (!email || !password) {
+                showCustomMessage("Por favor, ingresa tu correo y contraseña.");
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(window.auth, email, password);
+                showCustomMessage("¡Inicio de sesión exitoso!");
+                // Data will automatically load due to onAuthStateChanged listener
+            } catch (error) {
+                console.error("Error al iniciar sesión:", error);
+                let errorMessage = "Error al iniciar sesión. Verifica tu correo y contraseña.";
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = "No hay usuario registrado con ese correo electrónico.";
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = "Contraseña incorrecta.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "Formato de correo electrónico inválido.";
+                }
+                showCustomMessage(errorMessage);
+            }
+        }
+        window.loginUser = loginUser;
+
+        async function signupUser() {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+
+            if (!email || !password) {
+                showCustomMessage("Por favor, ingresa un correo y una contraseña para registrarte.");
+                return;
+            }
+            if (password.length < 6) {
+                showCustomMessage("La contraseña debe tener al menos 6 caracteres.");
+                return;
+            }
+
+            try {
+                await createUserWithEmailAndPassword(window.auth, email, password);
+                showCustomMessage("¡Registro exitoso! Has iniciado sesión automáticamente.");
+                // Data will automatically load due to onAuthStateChanged listener
+            } catch (error) {
+                    console.error("Error al registrarse:", error);
+                let errorMessage = "Error al registrarse. Intenta con otro correo.";
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = "El correo electrónico ya está en uso.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "Formato de correo electrónico inválido.";
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = "La contraseña es demasiado débil. Debe tener al menos 6 caracteres.";
+                }
+                showCustomMessage(errorMessage);
+            }
+        }
+        window.signupUser = signupUser;
+
+        async function logoutUser() {
+            try {
+                await signOut(window.auth);
+                showCustomMessage("Sesión cerrada correctamente. Volviendo a la autenticación anónima.");
+                // onAuthStateChanged will handle switching back to anonymous user
+            } catch (error) {
+                console.error("Error al cerrar sesión:", error);
+                showCustomMessage("Error al cerrar sesión: " + error.message);
+            }
+        }
+        window.logoutUser = logoutUser;
+
+
+        // Initial setup on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // =================================================================================================
+            // === CONFIGURACIÓN DE FIREBASE: ¡IMPORTANTE! REEMPLAZA CON TUS PROPIOS VALORES ===
+            // =================================================================================================
+            // Si deseas que el historial de servicios se guarde de forma persistente,
+            // pega aquí el objeto de configuración de tu proyecto Firebase.
+            // Puedes encontrarlo en la consola de Firebase: Configuración del proyecto -> Tus apps -> SDK setup and configuration.
+            //
+            // EJEMPLO (NO USES ESTOS VALORES, SON SOLO DE REFERENCIA):
+            // const userFirebaseConfig = {
+            //     apiKey: "AIzaSyC...",
+            //     authDomain: "tu-proyecto.firebaseapp.com",
+            //     projectId: "tu-proyecto",
+            //     storageBucket: "tu-proyecto.appspot.com",
+            //     messagingSenderId: "1234567890",
+            //     appId: "1:234567890:web:abcdef123456",
+            //     measurementId: "G-XXXXXXXXXX" // Opcional, si usas Google Analytics
+            // };
+            //
+            // SI NO PEGAS TUS VALORES AQUÍ, LA APLICACIÓN NO PODRÁ CONECTARSE A FIREBASE FUERA DE ESTE ENTORNO.
+            // =================================================================================================
+            const userFirebaseConfig = {
+                // 👇 Pega el valor de 'apiKey' de tu Firebase aquí, **entre las comillas**.
+                apiKey: "AIzaSyB5y_JSgvZZhhF2lblA3Xf-4CHkq4c4Dd8",
+                // 👇 Pega el valor de 'authDomain' de tu Firebase aquí, **entre las comillas**.
+                authDomain: "calculadora-de-servicios-9d144.firebaseapp.com",
+                // 👇 Pega el valor de 'projectId' de tu Firebase aquí, **entre las comillas**.
+                projectId: "calculadora-de-servicios-9d144",
+                // ? Pega el valor de 'storageBucket' de tu Firebase aquí, **entre las comillas**.
+                storageBucket: "calculadora-de-servicios-9d144.firebasestorage.app",
+                // ? Pega el valor de 'messagingSenderId' de tu Firebase aquí, **entre las comillas**.
+                messagingSenderId: "782870922497",
+                // 👇 Pega el valor de 'appId' de tu Firebase aquí, **entre las comillas**.
+                appId: "1:782870922497:web:10b36c6ad335728f944700",
+                // 👇 Si tienes 'measurementId', pégalo aquí también, **entre las comillas**.
+                measurementId: "G-2M7V4M3BSL"
+            };
+            // =================================================================================================
+            // === IMPORTANTE: HABILITA LOS MÉTODOS DE INICIO DE SESIÓN EN TU PROYECTO DE FIREBASE ===
+            // Ve a Firebase Console -> Authentication -> Sign-in method y habilita "Anonymous" y "Email/Password".
+            // =================================================================================================
+
+
+            // Determina la configuración de Firebase a usar
+            let firebaseConfigToUse = {};
+            let isRunningInCanvas = typeof __firebase_config !== 'undefined' && __firebase_config !== '{}';
+
+            if (isRunningInCanvas) {
+                firebaseConfigToUse = JSON.parse(__firebase_config);
+                console.log("Using Canvas-provided Firebase config (from __firebase_config).");
+            } else if (userFirebaseConfig.apiKey && userFirebaseConfig.projectId) {
+                firebaseConfigToUse = userFirebaseConfig;
+                console.log("Using user-provided Firebase config (from userFirebaseConfig).");
+            } else {
+                console.warn("Firebase config not found. Firestore features will be disabled.");
+            }
+
+            if (Object.keys(firebaseConfigToUse).length > 0 && firebaseConfigToUse.apiKey) {
+                try {
+                    window.firebaseApp = initializeApp(firebaseConfigToUse);
+                    window.db = getFirestore(window.firebaseApp);
+                    window.auth = getAuth(window.firebaseApp);
+                    firebaseInitialized = true;
+                    console.log("Firebase initialized successfully.");
+
+                    onAuthStateChanged(window.auth, async (user) => {
+                        const userIdDisplay = document.getElementById('userIdDisplay');
+                        const userEmailDisplay = document.getElementById('userEmailDisplay');
+                        const logoutButton = document.getElementById('logoutButton');
+
+                        if (user && user.email) { // User is authenticated with email/password
+                            window.userId = user.uid;
+                            window.userEmail = user.email;
+                            userIdDisplay.textContent = `ID de Usuario: ${window.userId}`;
+                            userEmailDisplay.textContent = `Email: ${window.userEmail}`;
+                            logoutButton.style.display = 'inline-block';
+                            showMainCalculatorPage(); // Show main app
+                        } else if (user && !user.email) { // User is anonymous
+                            window.userId = user.uid;
+                            window.userEmail = "Usuario Anónimo";
+                            userIdDisplay.textContent = `ID de Usuario: ${window.userId}`;
+                            userEmailDisplay.textContent = `Email: ${window.userEmail}`;
+                            logoutButton.style.display = 'none'; // Hide logout for anonymous
+                            showAuthPage(); // Show auth page to prompt for login/signup
+                        } else { // No user at all, attempt anonymous sign-in, then show auth page
+                            console.log("No user authenticated. Attempting anonymous sign-in...");
+                            try {
+                                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                                if (initialAuthToken && isRunningInCanvas) {
+                                    await signInWithCustomToken(window.auth, initialAuthToken);
+                                    console.log("Signed in with Canvas custom token.");
+                                } else {
+                                    await signInAnonymously(window.auth);
+                                    console.log("Signed in anonymously.");
+                                }
+                                // onAuthStateChanged will fire again with the anonymous user, leading to the 'else if (user && !user.email)' block
+                            } catch (error) {
+                                console.error("Firebase authentication error during sign-in:", error);
+                                window.userId = crypto.randomUUID(); // Fallback to a random ID
+                                window.userEmail = "No Autenticado";
+                                userIdDisplay.textContent = `ID de Usuario: ${window.userId} (No persistente)`;
+                                userEmailDisplay.textContent = `Email: ${window.userEmail}`;
+                                logoutButton.style.display = 'none';
+                                showCustomMessage(`Error de autenticación de Firebase: ${error.message}. Por favor, asegúrate de que la autenticación anónima y de correo/contraseña estén habilitadas en tu proyecto de Firebase.`);
+                                showAuthPage(); // Show auth page if sign-in fails
+                            }
+                        }
+
+                        loadValuesFromLocalStorage();
+                        populateAdminInputs();
+                        calculateCostsAndDisplay();
+                    });
+                } catch (error) {
+                    console.error("Error initializing Firebase (top level catch):", error);
+                    showCustomMessage("Error al inicializar Firebase. Por favor, verifica tu configuración y la conexión a internet.");
+                    firebaseInitialized = false;
+                    showAuthPage(); // Show auth page if Firebase init fails
+                }
+            } else {
+                window.userId = crypto.randomUUID(); // Fallback if Firebase not initialized
+                window.userEmail = "No Autenticado";
+                console.log("Firebase not initialized. Using random user ID for local operations.");
+                const userIdDisplay = document.getElementById('userIdDisplay');
+                const userEmailDisplay = document.getElementById('userEmailDisplay');
+                const logoutButton = document.getElementById('logoutButton');
+
+                if (userIdDisplay) {
+                    userIdDisplay.textContent = `ID de Usuario: ${window.userId} (No persistente)`;
+                }
+                if (userEmailDisplay) {
+                    userEmailDisplay.textContent = `Email: ${window.userEmail}`;
+                }
+                if (logoutButton) {
+                    logoutButton.style.display = 'none';
+                }
+
+                loadValuesFromLocalStorage();
+                populateAdminInputs();
+                calculateCostsAndDisplay();
+                showAuthPage(); // Show auth page if Firebase is not configured
+            }
+        });
+    </script>
+</body>
+</html>
