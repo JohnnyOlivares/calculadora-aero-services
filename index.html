@@ -993,7 +993,7 @@
             const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
             const year = date.getFullYear();
-            return `${year}-${month}-${day}`; // Return in YYYY-MM-DD for consistency with input type="date"
+            return `${day}/${month}/${year}`; // Return in DD/MM/YYYY for display
         }
         window.formatDateToDDMMYYYY = formatDateToDDMMYYYY; // Expose to global scope
 
@@ -1556,19 +1556,16 @@
             pdfContentDiv.style.fontSize = '0.9rem';
             console.log("pdfContentDiv for delay report created with inline styles.");
 
-            // Add header with image logo
+            // Add header with company name and RIF instead of logo
             pdfContentDiv.innerHTML += `
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #2c5282;">
-                    <div style="flex-shrink: 0;">
-                        <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="AERO SERVICES Logo" style="height: 70px; width: auto;" crossorigin="anonymous">
-                    </div>
-                    <div style="text-align: right; flex-grow: 1;">
-                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #000; margin-bottom: 0.25rem;">Reporte de Cálculo de Retraso de Pago</h1>
-                        <p style="font-size: 0.9rem; color: #000; margin-bottom: 0.15rem;">Fecha de Emisión: <span style="color: #000;">${formatDateToDDMMYYYY(new Date().toISOString().slice(0,10))}</span></p>
-                    </div>
+                <div style="text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #2c5282;">
+                    <h1 style="font-size: 1.8rem; font-weight: 700; color: #2c5282; margin-bottom: 0.5rem;">Reporte de Cálculo de Retraso de Pago</h1>
+                    <h2 style="font-size: 1.2rem; font-weight: 600; color: #4a5568; margin-bottom: 0.25rem;">AERO SERVICES Venezuela</h2>
+                    <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.5rem;">RIF: J-40916035-0</p>
+                    <p style="font-size: 0.9rem; color: #666;">Fecha de Emisión: <span style="color: #000;">${formatDateToDDMMYYYY(new Date().toISOString().slice(0,10))}</span></p>
                 </div>
             `;
-            console.log("Delay report header added with inline styles and image logo.");
+            console.log("Delay report header added with company name and RIF.");
 
             // Add service info
             pdfContentDiv.innerHTML += `<h2 style="font-size: 1.3rem; font-weight: 600; color: #2c5282; margin-top: 1rem; margin-bottom: 0.75rem; text-align: center; padding-bottom: 0.25rem; border-bottom: 1px solid #e2e8f0;">Información del Cliente y Servicio</h2>`;
@@ -1685,19 +1682,16 @@
             pdfContentDiv.style.fontSize = '0.9rem';
             console.log("pdfContentDiv created with inline styles.");
 
-            // Add header for PDF with image logo
+            // Add header for PDF with company name and RIF instead of logo
             pdfContentDiv.innerHTML += `
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #2c5282;">
-                    <div style="flex-shrink: 0;">
-                        <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="AERO SERVICES Logo" style="height: 70px; width: auto;" crossorigin="anonymous">
-                    </div>
-                    <div style="text-align: right; flex-grow: 1;">
-                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #000; margin-bottom: 0.25rem;">Presupuesto de Servicios Aéreos con Drone</h1>
-                        <p style="font-size: 0.9rem; color: #000; margin-bottom: 0.15rem;">Fecha de Emisión: <span style="color: #000;">${formatDateToDDMMYYYY(new Date().toISOString().slice(0,10))}</span></p>
-                    </div>
+                <div style="text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #2c5282;">
+                    <h1 style="font-size: 1.8rem; font-weight: 700; color: #2c5282; margin-bottom: 0.5rem;">Presupuesto de Servicios Aéreos con Drone</h1>
+                    <h2 style="font-size: 1.2rem; font-weight: 600; color: #4a5568; margin-bottom: 0.25rem;">AERO SERVICES Venezuela</h2>
+                    <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.5rem;">RIF: J-40916035-0</p>
+                    <p style="font-size: 0.9rem; color: #666;">Fecha de Emisión: <span style="color: #000;">${formatDateToDDMMYYYY(new Date().toISOString().slice(0,10))}</span></p>
                 </div>
             `;
-            console.log("PDF header added with inline styles and image logo.");
+            console.log("PDF header added with company name and RIF.");
 
             // Add main section title
             pdfContentDiv.innerHTML += `<h2 style="font-size: 1.3rem; font-weight: 600; color: #2c5282; margin-top: 1rem; margin-bottom: 0.75rem; text-align: center; padding-bottom: 0.25rem; border-bottom: 1px solid #e2e8f0;">Inversión en Servicios Aéreos con Drone</h2>`;
@@ -1796,7 +1790,7 @@
                     </tr>
                 `;
             } else if (selectedScenario === 'cosecha') {
-                const totalCosechaPerHa = (calculatedData.futureValueCosecha && hectares) ? calculatedData.futureValueCosecha / hectares : 0;
+                const totalCosechaPerHa = (futureValueCosecha && hectares) ? futureValueCosecha / hectares : 0;
 
                 tableHtml += `
                     <tr>
