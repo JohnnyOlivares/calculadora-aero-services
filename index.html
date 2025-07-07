@@ -6,6 +6,9 @@
     <title>Calculadora de Precios - AERO SERVICES Venezuela</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Importación de jsPDF y html2canvas para una mejor generación de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -15,18 +18,18 @@
         .container {
             max-width: 900px;
             margin: 1rem auto;
-            padding: 1rem;
+            padding: 1.5rem; /* Increased padding for a cleaner look */
             background-color: #ffffff;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Lighter shadow */
             border: 1px solid #e2e8f0;
         }
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.75rem;
+            margin-bottom: 1rem; /* Increased margin */
+            padding-bottom: 1rem; /* Increased padding */
             border-bottom: 1px solid #e2e8f0;
         }
         .logo-section {
@@ -35,13 +38,11 @@
         }
         .logo {
             width: auto;
-            height: 120px;
-            margin-right: 0.5rem;
+            height: 100px; /* Slightly smaller logo for a more formal look */
+            margin-right: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            color: #4a5568;
         }
         .logo img {
             width: auto;
@@ -49,12 +50,12 @@
             object-fit: contain;
             border-radius: 0;
         }
-        /* Hide slogan by default on screen, it will be shown in footer for print */
+        /* Slogan for screen display */
         .slogan-on-screen {
             text-align: right;
             font-style: italic;
             color: #4a5568;
-            font-size: 1.6rem;
+            font-size: 1.4rem; /* Slightly smaller for formality */
             line-height: 1.4;
         }
         .slogan-on-screen strong {
@@ -64,9 +65,9 @@
         /* Slogan for print, hidden by default on screen */
         .slogan-for-print {
             display: none; /* Hidden by default on screen */
-            margin-top: 0.5rem; /* Space above copyright */
+            margin-top: 0.5rem;
             font-style: italic;
-            font-size: 0.9rem; /* Smaller for footer */
+            font-size: 0.9rem;
             color: #4a5568;
             line-height: 1.4;
         }
@@ -76,17 +77,17 @@
         }
 
         .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 1.6rem; /* Slightly larger for prominence */
+            font-weight: 700; /* Bolder */
             color: #2c5282;
-            margin-top: 0.5rem;
-            margin-bottom: 0.75rem;
+            margin-top: 1.5rem; /* Increased top margin */
+            margin-bottom: 1rem; /* Increased bottom margin */
             text-align: center;
-            padding-bottom: 0.25rem;
-            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #2c5282; /* Stronger border for formality */
         }
         .input-group {
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem; /* Increased margin */
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -95,14 +96,16 @@
         .input-group label {
             margin-bottom: 0;
             flex-grow: 1;
-            margin-right: 0.5rem;
+            margin-right: 0.75rem; /* Increased margin */
             text-align: left;
+            font-weight: 600; /* Bolder labels */
+            color: #333; /* Darker text for formality */
         }
         .input-group input, .input-group select {
-            width: 30%;
-            min-width: 120px;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #cbd5e0;
+            width: 35%; /* Adjusted width for inputs */
+            min-width: 150px; /* Minimum width for readability */
+            padding: 0.6rem 0.8rem; /* Increased padding */
+            border: 1px solid #a0aec0; /* Darker border for formality */
             border-radius: 8px;
             font-size: 1rem;
             color: #333;
@@ -116,7 +119,7 @@
                 align-items: flex-start;
             }
             .input-group label {
-                margin-bottom: 0.25rem;
+                margin-bottom: 0.4rem;
                 margin-right: 0;
             }
             .input-group input, .input-group select {
@@ -128,47 +131,52 @@
 
         .input-group input:focus, .input-group select:focus {
             outline: none;
-            border-color: #63b3ed;
-            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+            border-color: #2c5282; /* Darker focus border */
+            box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.2); /* Darker shadow */
         }
         .notes-section {
-            margin-top: 1rem;
-            padding-top: 0.75rem;
+            margin-top: 1.5rem; /* Increased margin */
+            padding-top: 1rem; /* Increased padding */
             border-top: 1px solid #e2e8f0;
+            background-color: #ffffff; /* Ensure white background */
         }
         .notes-section h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: #2c5282;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            text-align: center; /* Center title */
         }
         .notes-section ul {
             list-style: none;
             padding-left: 0;
         }
         .notes-section ul li {
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.5rem;
             color: #4a5568;
-            line-height: 1.5;
+            line-height: 1.6; /* Increased line height for readability */
             display: flex;
             align-items: flex-start;
             padding-left: 0.25rem;
+            font-size: 0.95rem; /* Slightly larger font */
         }
         .notes-section ul li svg {
-            margin-right: 0.4rem;
+            margin-right: 0.5rem;
             flex-shrink: 0;
-            margin-top: 0;
+            margin-top: 0.15rem; /* Adjust icon alignment */
+            color: #2c5282; /* Icon color */
         }
         .notes-section ul li span {
             flex-grow: 1;
         }
         .contact-info {
-            margin-top: 1rem;
-            padding-top: 0.75rem;
+            margin-top: 1.5rem; /* Increased margin */
+            padding-top: 1rem; /* Increased padding */
             border-top: 1px solid #e2e8f0;
             text-align: center;
             font-size: 0.95rem;
             color: #4a5568;
+            background-color: #ffffff; /* Ensure white background */
         }
         .contact-info strong {
             color: #2c5282;
@@ -186,21 +194,22 @@
             }
         }
         .scenario-selection {
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            background-color: #e6f2ff;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem; /* Increased padding */
+            background-color: #f7fafc; /* Lighter background */
             border-radius: 8px;
-            border: 1px solid #b3d9ff;
+            border: 1px solid #e2e8f0; /* Softer border */
             text-align: center;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Subtle inner shadow */
         }
         .scenario-selection label {
-            margin-right: 0.75rem;
+            margin-right: 1rem; /* Increased margin */
             font-weight: 600;
             color: #2c5282;
             cursor: pointer;
         }
         .scenario-selection input[type="radio"] {
-            margin-right: 0.25rem;
+            margin-right: 0.4rem;
             accent-color: #007bff;
         }
 
@@ -208,36 +217,42 @@
         .budget-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1rem;
-            background-color: #f7fafc;
+            margin-top: 1.5rem; /* Increased margin */
+            background-color: #ffffff; /* White background for formality */
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: none; /* No shadow for formal look */
+            border: 1px solid #e2e8f0; /* Subtle border for the whole table */
         }
         .budget-table th, .budget-table td {
-            padding: 0.75rem 0.6rem;
+            padding: 0.8rem 1rem; /* Increased padding */
             text-align: left;
-            border-bottom: 1px solid #e2e8f0;
+            border: 1px solid #e2e8f0; /* Borders for all cells */
+            color: #000; /* Black text for formality */
         }
         .budget-table th {
-            background-color: #e0f2fe;
+            background-color: #f0f4f8; /* Light grey for headers */
             color: #2c5282;
             font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.9rem;
+            font-size: 0.95rem; /* Slightly larger font */
         }
         .budget-table td {
-            color: #4a5568;
             font-size: 1rem;
         }
         .budget-table tbody tr:last-child td {
-            border-bottom: none;
+            border-bottom: 1px solid #e2e8f0; /* Ensure last row still has bottom border */
         }
         .budget-table .total-row td {
-            background-color: #d1e9ff;
+            background-color: #e0f2fe; /* Light blue for total row */
             font-weight: 700;
             color: #007bff;
-            font-size: 1.1rem;
+            font-size: 1.15rem; /* Slightly larger font for total */
+        }
+        /* Align numeric columns to the right */
+        .budget-table td:nth-child(2),
+        .budget-table td:nth-child(3) {
+            text-align: right;
         }
         .budget-table .mora-note {
             font-size: 0.85rem;
@@ -247,12 +262,14 @@
             text-align: right;
             border-top: 1px dashed #e2e8f0;
             margin-top: 0.5rem;
-            padding-left: 0.6rem;
-            padding-right: 0.6rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            background-color: #ffffff; /* Ensure white background */
+            color: #000; /* Black text for formality */
         }
         .summary-section {
-            margin-top: 0.75rem;
-            padding: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
             background-color: #e6f2ff;
             border-radius: 8px;
             border: 1px solid #b3d9ff;
@@ -276,41 +293,43 @@
         .admin-controls-container {
             max-width: 900px;
             margin: 1rem auto 0.5rem auto;
-            padding: 0.75rem;
+            padding: 1rem; /* Increased padding */
             background-color: #e0f7fa;
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Lighter shadow */
             border: 1px solid #b2ebf2;
             color: #006064;
         }
 
         .admin-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem; /* Slightly larger */
             font-weight: 700;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             text-align: center;
             color: #004d40;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #a7d9de;
         }
 
         .admin-input-group {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.6rem;
         }
 
         .admin-input-group label {
             font-weight: 600;
-            margin-right: 0.5rem;
+            margin-right: 0.75rem;
             flex-grow: 1;
         }
 
         .admin-input-group input {
-            width: 35%;
-            padding: 0.3rem 0.4rem;
+            width: 40%; /* Adjusted width */
+            padding: 0.4rem 0.6rem;
             border: 1px solid #a7d9de;
             border-radius: 6px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #333;
             text-align: center;
         }
@@ -318,46 +337,71 @@
         /* Styles for the new offer section */
         .offer-section {
             margin-top: 1.5rem;
-            padding: 1rem;
-            background-color: #f0fdf4; /* Light green background */
+            padding: 1.5rem; /* Increased padding */
+            background-color: #ffffff; /* White background for formality */
             border-radius: 8px;
-            border: 1px solid #d1fae5;
-            color: #10b981;
+            border: 1px solid #e2e8f0; /* Subtle border */
+            color: #333; /* Darker text */
+            box-shadow: none; /* No shadow */
         }
         .offer-section p {
-            margin-bottom: 0.75rem;
-            line-height: 1.5;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #4a5568;
         }
         .offer-section .input-group {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem; /* Adjusted margin */
+            flex-wrap: nowrap; /* Prevent wrapping for labels/inputs */
+            align-items: baseline; /* Align text baselines */
         }
         .offer-section .input-group label {
-            color: #065f46;
+            color: #333; /* Darker label text */
+            width: 45%; /* Fixed width for labels */
+            flex-shrink: 0; /* Prevent label from shrinking */
+            margin-right: 1rem; /* Space between label and input */
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
         }
         .offer-section .input-group input {
-            border-color: #6ee7b7;
+            border-color: #a0aec0; /* Darker border */
+            width: 50%; /* Fixed width for inputs */
+            text-align: left; /* Align text to left in inputs */
+            font-size: 0.95rem;
         }
+        /* Style for print spans in offer section */
+        .offer-section .input-group span[id^="print"] {
+            width: 50%; /* Match input width */
+            text-align: right; /* Align values to the right */
+            color: #000; /* Black text */
+            display: none; /* Hidden by default on screen */
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
 
         /* Buttons for navigation and actions */
         .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 1.5rem;
+            gap: 1.2rem; /* Increased gap */
+            margin-top: 2rem; /* Increased margin */
         }
         .action-buttons button {
-            padding: 0.75rem 1.5rem;
+            padding: 0.8rem 1.8rem; /* Increased padding */
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
             background-color: #38a169;
             color: white;
             border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         .action-buttons button:hover {
             background-color: #2f855a;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         /* History Page Styles */
@@ -371,11 +415,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 1rem;
+            padding: 0.8rem 1.2rem; /* Increased padding */
             border-bottom: 1px solid #e2e8f0;
             background-color: #f7fafc;
             border-radius: 8px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem; /* Increased margin */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Subtle shadow */
         }
         .history-item:last-child {
             border-bottom: none;
@@ -383,63 +428,78 @@
         .history-item-details {
             flex-grow: 1;
             color: #4a5568;
+            font-size: 0.95rem;
         }
         .history-item-details strong {
             color: #2c5282;
         }
         .history-item .history-actions {
             display: flex;
-            gap: 0.5rem; /* Space between buttons */
+            gap: 0.75rem; /* Increased space */
         }
         .history-item .history-actions button {
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1.2rem; /* Adjusted padding */
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.2s;
+            font-weight: 500;
         }
         .history-item .history-actions button:hover {
             background-color: #0056b3;
         }
         .history-item .history-actions .delete-button {
-            background-color: #e53e3e; /* Red for delete */
+            background-color: #e53e3e;
         }
         .history-item .history-actions .delete-button:hover {
             background-color: #c53030;
         }
 
-        /* Delay Calculation Section (now integrated) */
+        /* Delay Calculation Section */
         #delayCalculationSection {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background-color: #fffbe6; /* Light yellow background */
-            border-radius: 8px;
-            border: 1px solid #ffeeba;
-            color: #92400e;
+            margin-top: 2rem; /* Increased margin */
+            padding: 1.5rem; /* Increased padding */
+            background-color: #ffffff; /* White background for formality */
+            border-radius: 12px;
+            border: 1px solid #e2e8f0; /* Subtle border */
+            color: #333; /* Darker text */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Lighter shadow */
             display: none; /* Hidden by default, shown when a service is selected */
         }
         #delayCalculationSection h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #78350f;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: #2c5282;
+            text-align: center;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
         }
         #delayCalculationSection .input-group {
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        #delayCalculationSection .input-group label {
+            color: #333; /* Darker label text */
+            font-weight: 600;
+        }
+        #delayCalculationSection .input-group span {
+            color: #000; /* Black text for displayed values */
+            font-weight: 500;
         }
         #delayCalculationSection .result-box {
-            background-color: #fff3cd;
-            padding: 0.75rem;
-            border-radius: 6px;
-            margin-top: 1rem;
+            background-color: #f0f4f8; /* Light grey background */
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
             font-weight: 600;
-            color: #78350f;
+            color: #333; /* Darker text */
+            border: 1px solid #e2e8f0; /* Subtle border */
         }
         #delayCalculationSection .result-box span {
             font-weight: 700;
-            color: #c2410c;
+            color: #007bff; /* Blue for key results */
         }
         #delayCalculationSection .print-button {
             padding: 0.75rem 1.5rem;
@@ -450,11 +510,13 @@
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.2s;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         #delayCalculationSection .print-button:hover {
             background-color: #2f855a;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         /* Custom Modal Styles */
@@ -519,271 +581,417 @@
             background-color: #a0aec0;
         }
 
-        /* Print styles */
+        /* Print-specific styles for the temporary print container */
+        #print-container {
+            position: absolute;
+            left: -9999px; /* Off-screen */
+            top: -9999px;
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            background-color: white;
+            padding: 0.5in; /* Standard print margins */
+            box-sizing: border-box; /* Include padding in width/height */
+            color: #000; /* Ensure black text */
+            font-family: 'Inter', sans-serif; /* Ensure font is applied */
+            font-size: 11pt; /* Standard print font size */
+        }
+
+        /* Styles for elements when they are inside the print-container */
+        #print-container .admin-controls-container,
+        #print-container .action-buttons,
+        #print-container .contact-info p:not(.slogan-for-print p),
+        #print-container .input-group input,
+        #print-container .input-group select,
+        #print-container .error-message,
+        #print-container .input-group .text-sm,
+        #print-container .scenario-selection,
+        #print-container .section-title,
+        #print-container .header,
+        #print-container .slogan-on-screen,
+        #print-container #actualPaymentDate /* Hide actual payment date input in delay report */
+        {
+            display: none !important;
+        }
+
+        #print-container .print-only-budget-header,
+        #print-container .print-only-header {
+            display: flex !important; /* Show print-only headers */
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #2c5282;
+            color: #000;
+        }
+        #print-container .print-only-budget-header .header-left,
+        #print-container .print-only-header .header-left {
+            flex-basis: 30%;
+            text-align: left;
+        }
+        #print-container .print-only-budget-header .header-left img,
+        #print-container .print-only-header .header-left img {
+            height: 70px;
+            width: auto;
+        }
+        #print-container .print-only-budget-header .header-right,
+        #print-container .print-only-header .header-right {
+            flex-basis: 65%;
+            text-align: right;
+        }
+        #print-container .print-only-budget-header h1,
+        #print-container .print-only-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000 !important;
+            margin-bottom: 0.3rem;
+        }
+        #print-container .print-only-budget-header p,
+        #print-container .print-only-header p {
+            font-size: 0.9rem;
+            color: #000 !important;
+            margin-bottom: 0.15rem;
+        }
+        #print-container .print-only-budget-header span,
+        #print-container .print-only-header span {
+            color: #000 !important;
+        }
+
+        #print-container .offer-section,
+        #print-container #delayCalculationSection {
+            background-color: white !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: #000 !important;
+            padding: 0 !important;
+            margin-top: 0 !important;
+        }
+        #print-container .offer-section p {
+            color: #000 !important;
+            margin-bottom: 0.4rem;
+        }
+        #print-container .input-group {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.2rem;
+        }
+        #print-container .input-group label {
+            flex: 0 0 auto;
+            width: 45%;
+            margin-right: 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: #000 !important;
+            font-size: 0.9rem;
+        }
+        #print-container .input-group span[id^="print"],
+        #print-container #delayClientName,
+        #print-container #delayClientId,
+        #print-container #delayServiceDate,
+        #print-container #delayEstimatedPaymentDate,
+        #print-container #delayOriginalAmountDue,
+        #print-container #calculatedDelayMonths,
+        #print-container #additionalInterestAmount,
+        #print-container #newTotalWithDelay,
+        #print-container #newPricePerHectareWithDelay,
+        #print-container #delayDaysCount
+        {
+            flex: 0 0 auto;
+            width: 50%;
+            text-align: right;
+            color: #000 !important;
+            display: block !important; /* Show the span for printing */
+            font-size: 0.9rem;
+        }
+
+        #print-container .budget-table {
+            background-color: white !important;
+            box-shadow: none !important;
+            border: 1px solid #e2e8f0 !important;
+            margin-top: 0.75rem;
+        }
+        #print-container .budget-table th,
+        #print-container .budget-table td {
+            color: #000 !important;
+            border: 1px solid #e2e8f0 !important;
+            background-color: white !important;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.9rem;
+        }
+        #print-container .budget-table th {
+            background-color: #f0f4f8 !important;
+        }
+        #print-container .budget-table .total-row td {
+            background-color: #e0f2fe !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-size: 1rem;
+        }
+        #print-container .budget-table td:nth-child(2),
+        #print-container .budget-table td:nth-child(3) {
+            text-align: right !important;
+        }
+        #print-container .budget-table .mora-note {
+            color: #000 !important;
+            border-top: 1px dashed #e2e8f0 !important;
+            font-size: 0.75rem;
+        }
+
+        #print-container .notes-section {
+            background-color: white !important;
+            border-top: 1px solid #e2e8f0 !important;
+            padding-top: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        #print-container .notes-section h2 {
+            color: #000 !important;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        #print-container .notes-section ul li {
+            color: #000 !important;
+            font-size: 0.75rem;
+            margin-bottom: 0.2rem;
+        }
+        #print-container .notes-section ul li svg {
+            fill: #000 !important;
+            width: 0.8em;
+            height: 0.8em;
+        }
+
+        #print-container .contact-info {
+            display: block !important;
+            text-align: center;
+            margin-top: 0.75rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        #print-container .slogan-for-print {
+            display: block !important;
+            color: #000 !important;
+            font-size: 0.8rem !important;
+            font-style: italic !important;
+            margin-bottom: 0.3rem;
+        }
+        #print-container .slogan-for-print strong {
+            color: #000 !important;
+        }
+        #print-container .contact-info p {
+            font-size: 0.75rem !important;
+        }
+
+        #print-container #delayCalculationResults {
+            display: block !important; /* Ensure results box is visible for delay report */
+            background-color: #f0f4f8 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            border: 1px solid #e2e8f0 !important;
+            color: #000 !important;
+        }
+        #print-container #delayCalculationResults span {
+            background-color: transparent !important;
+            color: #000 !important; /* Ensure black for delay results values */
+        }
+        #print-container #delayCalculationResults strong {
+            color: #000 !important;
+        }
+        #print-container #delayCalculationResults .text-sm {
+            color: #000 !important;
+        }
+
+        /* Standard browser print styles (still useful for direct browser printing) */
         @media print {
             body > * {
                 display: none !important; /* Hide everything by default */
             }
-
-            /* This class will be added to the section we want to print */
-            .print-active-section {
+            .container {
                 display: block !important;
                 width: 100%;
                 max-width: 100%;
-                margin: 0 auto !important; /* Center horizontally for print */
-                padding: 0.5rem; /* Reduced padding for print */
-                box-shadow: none;
-                border: none;
-                background-color: white;
-                color: #000;
+                margin: 0 auto !important;
+                padding: 0.5in !important; /* Set consistent margins for print */
+                box-shadow: none !important;
+                border: none !important;
+                background-color: white !important;
+                color: #000 !important;
             }
-
-            /* Hide elements not needed for the budget print, when main-calculator-page is active */
-            #main-calculator-page.print-active-section .admin-controls-container,
-            #main-calculator-page.print-active-section .action-buttons,
-            #main-calculator-page.print-active-section .contact-info p:not(.slogan-for-print p), /* Hide copyright, but not slogan within footer */
-            #main-calculator-page.print-active-section .input-group input[type="date"], /* Hide date inputs */
-            #main-calculator-page.print-active-section .input-group input[type="text"], /* Hide text inputs */
-            #main-calculator-page.print-active-section .input-group input[type="number"], /* Hide number inputs */
-            #main-calculator-page.print-active-section .input-group select, /* Hide select inputs */
-            #main-calculator-page.print-active-section .error-message,
-            #main-calculator-page.print-active-section .input-group .text-sm, /* Hide info texts below inputs */
-            #main-calculator-page.print-active-section .scenario-selection,
-            #main-calculator-page.print-active-section .section-title /* Hide main section title */
-            {
+            .admin-controls-container, .action-buttons, .header, .slogan-on-screen, #actualPaymentDate {
                 display: none !important;
             }
-
-            /* Show the print-only header for the main budget */
-            #main-calculator-page.print-active-section .print-only-budget-header {
-                display: flex !important; /* Use flexbox for alignment */
-                justify-content: space-between; /* Space between logo and text */
-                align-items: flex-start; /* Align items to the top */
-                margin-bottom: 1rem; /* Reduced margin */
-                padding-bottom: 0.75rem; /* Reduced padding */
+            .print-only-budget-header, .print-only-header {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 1rem;
+                padding-bottom: 0.75rem;
                 border-bottom: 2px solid #2c5282;
             }
-            #main-calculator-page.print-active-section .print-only-budget-header .header-left {
-                flex-basis: 30%; /* Adjust width for logo */
+            .print-only-budget-header .header-left, .print-only-header .header-left {
+                flex-basis: 30%;
                 text-align: left;
             }
-            #main-calculator-page.print-active-section .print-only-budget-header .header-left img {
-                height: 70px; /* Smaller logo for print */
+            .print-only-budget-header .header-left img, .print-only-header .header-left img {
+                height: 70px;
                 width: auto;
             }
-            #main-calculator-page.print-active-section .print-only-budget-header .header-right {
-                flex-basis: 65%; /* Adjust width for text */
+            .print-only-budget-header .header-right, .print-only-header .header-right {
+                flex-basis: 65%;
                 text-align: right;
             }
-            #main-calculator-page.print-active-section .print-only-budget-header h1 {
-                font-size: 1.5rem; /* Reduced font size for header title */
+            .print-only-budget-header h1, .print-only-header h1 {
+                font-size: 1.5rem;
                 font-weight: 700;
                 color: #000 !important;
-                margin-bottom: 0.3rem; /* Reduced margin */
+                margin-bottom: 0.3rem;
             }
-            #main-calculator-page.print-active-section .print-only-budget-header p {
-                font-size: 0.9rem; /* Reduced font size */
+            .print-only-budget-header p, .print-only-header p {
+                font-size: 0.9rem;
                 color: #000 !important;
-                margin-bottom: 0.15rem; /* Reduce space between paragraphs */
+                margin-bottom: 0.15rem;
             }
-            #main-calculator-page.print-active-section .print-only-budget-header span {
+            .print-only-budget-header span, .print-only-header span {
                 color: #000 !important;
             }
 
-            /* Adjust the original header and slogan for print (hide them) */
-            #main-calculator-page.print-active-section .header,
-            #main-calculator-page.print-active-section .slogan-on-screen { /* Hide the screen version of slogan */
-                display: none !important;
-            }
-
-            /* Ensure offer section content is visible and styled correctly */
-            #main-calculator-page.print-active-section .offer-section {
+            .offer-section, #delayCalculationSection {
                 background-color: white !important;
                 border: none !important;
                 box-shadow: none !important;
                 color: #000 !important;
-                padding: 0;
-                margin-top: 0;
+                padding: 0 !important;
+                margin-top: 0 !important;
             }
-            #main-calculator-page.print-active-section .offer-section p {
+            .offer-section p {
                 color: #000 !important;
-                margin-bottom: 0.4rem; /* Reduced margin */
+                margin-bottom: 0.4rem;
             }
-            #main-calculator-page.print-active-section .offer-section .input-group {
+            .input-group {
                 display: flex;
                 flex-wrap: nowrap;
                 justify-content: space-between;
                 align-items: baseline;
-                margin-bottom: 0.2rem; /* Further reduced margin */
+                margin-bottom: 0.2rem;
             }
-            #main-calculator-page.print-active-section .offer-section .input-group label {
+            .input-group label {
                 flex: 0 0 auto;
-                width: 45%; /* Adjust width for labels */
+                width: 45%;
                 margin-right: 0.5rem;
                 text-align: left;
                 font-weight: 600;
                 color: #000 !important;
-                font-size: 0.9rem; /* Consistent font size */
+                font-size: 0.9rem;
             }
-            #main-calculator-page.print-active-section .offer-section .input-group span { /* For displaying values */
+            .input-group input, .input-group select {
+                display: none !important; /* Hide inputs in print */
+            }
+            .input-group span[id^="print"],
+            #delayClientName, #delayClientId, #delayServiceDate, #delayEstimatedPaymentDate, #delayOriginalAmountDue,
+            #calculatedDelayMonths, #additionalInterestAmount, #newTotalWithDelay, #newPricePerHectareWithDelay, #delayDaysCount {
                 flex: 0 0 auto;
-                width: 50%; /* Adjust width for values */
+                width: 50%;
                 text-align: right;
                 color: #000 !important;
                 display: block !important; /* Show the span for printing */
-                font-size: 0.9rem; /* Consistent font size */
-            }
-            #main-calculator-page.print-active-section .offer-section .input-group input,
-            #main-calculator-page.print-active-section .input-group select { /* Hide inputs for printing */
-                display: none !important;
-            }
-            /* Show print spans for the main input groups */
-            #main-calculator-page.print-active-section .input-group #printHectares,
-            #main-calculator-page.print-active-section .input-group #printMixVolume,
-            #main-calculator-page.print-active-section .input-group #printFinancingMonths {
-                display: block !important;
-                width: 50%; /* Match the width of other print spans */
-                text-align: right;
-                color: #000 !important;
-                font-size: 0.9rem; /* Consistent font size */
-            }
-            /* Adjust labels for the main input groups to match offer section */
-            #main-calculator-page.print-active-section .input-group label {
-                width: 45%;
-                text-align: left;
-                font-weight: 600;
-                color: #000 !important;
-                font-size: 0.9rem; /* Consistent font size */
+                font-size: 0.9rem;
             }
 
-
-            /* Ensure budget table is formal */
-            #main-calculator-page.print-active-section .budget-table {
+            .budget-table {
                 background-color: white !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
-                margin-top: 0.75rem; /* Reduced margin */
+                margin-top: 0.75rem;
             }
-            #main-calculator-page.print-active-section .budget-table th,
-            #main-calculator-page.print-active-section .budget-table td {
+            .budget-table th, .budget-table td {
                 color: #000 !important;
-                border: 1px solid #e2e8f0 !important; /* Ensure borders are visible */
+                border: 1px solid #e2e8f0 !important;
                 background-color: white !important;
-                padding: 0.4rem 0.6rem; /* Reduced padding for table cells */
-                font-size: 0.9rem; /* Consistent font size for table body */
+                padding: 0.4rem 0.6rem;
+                font-size: 0.9rem;
             }
-            #main-calculator-page.print-active-section .budget-table th {
-                background-color: #f0f4f8 !important; /* Light grey for headers */
+            .budget-table th {
+                background-color: #f0f4f8 !important;
             }
-            #main-calculator-page.print-active-section .budget-table .total-row td {
-                background-color: #e0f2fe !important; /* Light blue for total row */
+            .budget-table .total-row td {
+                background-color: #e0f2fe !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-                font-size: 1rem; /* Slightly reduced for total row */
+                font-size: 1rem;
             }
-            /* Align numeric columns to the right */
-            #main-calculator-page.print-active-section .budget-table td:nth-child(2),
-            #main-calculator-page.print-active-section .budget-table td:nth-child(3) {
+            .budget-table td:nth-child(2), .budget-table td:nth-child(3) {
                 text-align: right !important;
             }
-            #main-calculator-page.print-active-section .budget-table .mora-note {
+            .budget-table .mora-note {
                 color: #000 !important;
                 border-top: 1px dashed #e2e8f0 !important;
-                font-size: 0.75rem; /* Further reduced font size */
+                font-size: 0.75rem;
             }
 
-            /* Notes section for print */
-            #main-calculator-page.print-active-section .notes-section {
+            .notes-section {
                 background-color: white !important;
                 border-top: 1px solid #e2e8f0 !important;
-                padding-top: 0.5rem; /* Reduced padding */
-                margin-top: 0.75rem; /* Reduced margin */
+                padding-top: 0.5rem;
+                margin-top: 0.75rem;
             }
-            #main-calculator-page.print-active-section .notes-section h2 {
+            .notes-section h2 {
                 color: #000 !important;
                 text-align: center;
-                font-size: 1.1rem; /* Slightly reduced for print */
+                font-size: 1.1rem;
             }
-            #main-calculator-page.print-active-section .notes-section ul li {
+            .notes-section ul li {
                 color: #000 !important;
-                font-size: 0.75rem; /* Smaller font size for considerations */
-                margin-bottom: 0.2rem; /* Reduced margin */
+                font-size: 0.75rem;
+                margin-bottom: 0.2rem;
             }
-            #main-calculator-page.print-active-section .notes-section ul li svg {
+            .notes-section ul li svg {
                 fill: #000 !important;
-                width: 0.8em; /* Smaller icon */
-                height: 0.8em; /* Smaller icon */
+                width: 0.8em;
+                height: 0.8em;
             }
 
-            /* Slogan in footer for print */
-            .print-active-section .contact-info {
-                display: block !important; /* Ensure footer is visible */
+            .contact-info {
+                display: block !important;
                 text-align: center;
-                margin-top: 0.75rem; /* Reduced margin */
-                padding-top: 0.5rem; /* Reduced padding */
+                margin-top: 0.75rem;
+                padding-top: 0.5rem;
                 border-top: 1px solid #e2e8f0;
             }
-            .print-active-section .slogan-for-print {
-                display: block !important; /* Show the slogan for print */
-                color: #000 !important; /* Ensure black text */
-                font-size: 0.8rem !important; /* Adjust font size for footer */
-                font-style: italic !important;
-                margin-bottom: 0.3rem; /* Reduced margin */
-            }
-            .print-active-section .slogan-for-print strong {
-                color: #000 !important;
-            }
-            .print-active-section .contact-info p {
-                font-size: 0.75rem !important; /* Consistent with slogan */
-            }
-
-
-            @page {
-                size: Letter;
-                margin: 0.5in;
-            }
-
-            /* Print styles for delay calculation section */
-            #history-page.print-active-section #delayCalculationSection {
-                display: block !important; /* Ensure it's visible if it's the target for printing */
-                width: 100%;
-                max-width: 100%;
-                margin: 0 auto !important; /* Center horizontally for print */
-                padding: 1rem;
-                box-shadow: none;
-                border: none;
-                background-color: white;
-                color: #000;
-            }
-            #history-page.print-active-section #delayCalculationSection .print-only-header {
+            .slogan-for-print {
                 display: block !important;
+                color: #000 !important;
+                font-size: 0.8rem !important;
+                font-style: italic !important;
+                margin-bottom: 0.3rem;
             }
-            #history-page.print-active-section #delayCalculationSection h3,
-            #history-page.print-active-section #delayCalculationSection .input-group label,
-            #history-page.print-active-section #delayCalculationSection .input-group span,
-            #history-page.print-active-section #delayCalculationSection .result-box p,
-            #history-page.print-active-section #delayCalculationSection .result-box strong,
-            #history-page.print-active-section #delayCalculationSection .result-box span,
-            #history-page.print-active-section #delayCalculationSection .text-sm {
+            .slogan-for-print strong {
                 color: #000 !important;
             }
-            #history-page.print-active-section #delayCalculationSection .result-box {
+            .contact-info p {
+                font-size: 0.75rem !important;
+            }
+
+            #delayCalculationResults {
+                display: block !important;
                 background-color: #f0f4f8 !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 border: 1px solid #e2e8f0 !important;
+                color: #000 !important;
             }
-            #history-page.print-active-section #delayCalculationSection .result-box span {
+            #delayCalculationResults span {
                 background-color: transparent !important;
+                color: #000 !important;
             }
-            #history-page.print-active-section #delayCalculationSection .action-buttons {
-                display: none !important;
+            #delayCalculationResults strong {
+                color: #000 !important;
             }
-            /* Hide other elements on history page when printing delay section */
-            #history-page.print-active-section #serviceHistoryList,
-            #history-page.print-active-section .action-buttons:not(#delayCalculationSection .action-buttons),
-            #history-page.print-active-section .section-title { /* Hide the "Historial de Servicios y Cálculo de Retrasos" title */
-                display: none !important;
+            #delayCalculationResults .text-sm {
+                color: #000 !important;
+            }
+
+            @page {
+                size: Letter;
+                margin: 0.5in;
             }
         }
     </style>
@@ -1073,6 +1281,9 @@
         </div>
     </div>
 
+    <!-- Dedicated print container (hidden off-screen) -->
+    <div id="print-container"></div>
+
     <script type="module">
         // Firebase SDK imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -1190,7 +1401,7 @@
             // Convert milliseconds to days
             const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-            // Convert days to months using the average number of days in a month (365.25 / 12)
+            // Convert days to months using the average number of days in a month (30.4375 days per month)
             return diffDays / 30.4375;
         }
 
@@ -1656,47 +1867,80 @@
         // Expose function to global scope
         window.calculateDelayInterest = calculateDelayInterest;
 
-        // Function to print the delay report
-        function printDelayReport() {
+        // Function to print the delay report using jsPDF
+        async function printDelayReport() {
             // Set the current date for the report print header
             document.getElementById('reportIssueDatePrint').textContent = formatDateToDDMMYYYY(new Date().toISOString().slice(0,10));
 
-            // Hide all sections first
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('main-calculator-page').style.display = 'none';
-            document.getElementById('history-page').style.display = 'block'; // Ensure history page is visible for its child to print
+            const printContainer = document.getElementById('print-container');
+            const delaySection = document.getElementById('delayCalculationSection');
 
-            // Remove print-active-section from all potential print containers first
-            document.getElementById('main-calculator-page').classList.remove('print-active-section');
-            document.getElementById('history-page').classList.remove('print-active-section');
+            // Clone the delay section
+            const clonedSection = delaySection.cloneNode(true);
 
-            // Add print-active-section to the desired print container (history-page, as delay section is inside it)
-            document.getElementById('history-page').classList.add('print-active-section');
+            // Modify the cloned content for printing
+            clonedSection.style.display = 'block'; // Ensure the cloned section is visible
 
-            window.print(); // Trigger the print dialog
+            // Hide input field in the clone
+            const actualPaymentDateInput = clonedSection.querySelector('#actualPaymentDate');
+            if (actualPaymentDateInput) {
+                actualPaymentDateInput.style.display = 'none';
+            }
 
-            // Clean up: restore original display
-            document.getElementById('history-page').classList.remove('print-active-section');
-            showHistoryPage(); // Return to history page view
+            // Show print-only header in the clone
+            const printOnlyHeader = clonedSection.querySelector('.print-only-header');
+            if (printOnlyHeader) {
+                printOnlyHeader.style.display = 'block';
+            }
+
+            // Hide action buttons in the clone
+            const actionButtons = clonedSection.querySelector('.action-buttons');
+            if (actionButtons) {
+                actionButtons.style.display = 'none';
+            }
+
+            // Append the cloned section to the off-screen print container
+            printContainer.innerHTML = ''; // Clear previous content
+            printContainer.appendChild(clonedSection);
+
+            try {
+                const canvas = await html2canvas(printContainer, { scale: 1.5, useCORS: true, logging: true, backgroundColor: '#ffffff' });
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210;
+                const pageHeight = 297;
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                pdf.save('Reporte_Retraso_Servicio.pdf');
+            } catch (error) {
+                console.error("Error generating PDF for delay report:", error);
+                showCustomMessage("Error al generar el PDF del reporte de retraso: " + error.message);
+            } finally {
+                // Clean up: remove the cloned section from the print container
+                if (clonedSection.parentNode === printContainer) {
+                    printContainer.removeChild(clonedSection);
+                }
+                showHistoryPage(); // Return to history page view
+            }
         }
         window.printDelayReport = printDelayReport;
 
-        // New function to print the budget report
-        function printBudgetReport() {
+        // Function to print the budget report using jsPDF
+        async function printBudgetReport() {
             // Set the current date for the budget print header
             document.getElementById('budgetIssueDatePrint').textContent = formatDateToDDMMYYYY(new Date().toISOString().slice(0,10));
-
-            // Hide all sections first
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('history-page').style.display = 'none';
-            document.getElementById('main-calculator-page').style.display = 'block'; // Ensure main calculator page is visible for printing
-
-            // Remove print-active-section from all potential print containers first
-            document.getElementById('main-calculator-page').classList.remove('print-active-section');
-            document.getElementById('history-page').classList.remove('print-active-section');
-
-            // Add print-active-section to the desired print container
-            document.getElementById('main-calculator-page').classList.add('print-active-section');
 
             // Set the values for the print-only spans in the offer section
             document.getElementById('printClientName').textContent = document.getElementById('clientName').value;
@@ -1707,12 +1951,79 @@
             document.getElementById('printMixVolume').textContent = document.getElementById('mixVolume').value;
             document.getElementById('printFinancingMonths').textContent = document.getElementById('financingMonths').value;
 
+            const printContainer = document.getElementById('print-container');
+            const mainCalculatorPage = document.getElementById('main-calculator-page');
 
-            window.print(); // Trigger the print dialog
+            // Clone the main calculator page
+            const clonedPage = mainCalculatorPage.cloneNode(true);
 
-            // Restore original display after printing
-            document.getElementById('main-calculator-page').classList.remove('print-active-section');
-            showMainCalculatorPage(); // Return to main calculator view
+            // Modify the cloned content for printing
+            clonedPage.style.display = 'block'; // Ensure the cloned page is visible
+
+            // Hide elements not needed for the budget print in the clone
+            const elementsToHideInClone = clonedPage.querySelectorAll('.admin-controls-container, .action-buttons, .contact-info p:not(.slogan-for-print p), .input-group input, .input-group select, .error-message, .input-group .text-sm, .scenario-selection, .section-title, .header, .slogan-on-screen');
+            elementsToHideInClone.forEach(el => {
+                el.style.display = 'none';
+            });
+
+            // Show print-only header in the clone
+            const printOnlyBudgetHeader = clonedPage.querySelector('.print-only-budget-header');
+            if (printOnlyBudgetHeader) {
+                printOnlyBudgetHeader.style.display = 'flex';
+            }
+
+            // Ensure print spans are visible in the clone
+            const printSpans = clonedPage.querySelectorAll('[id^="print"]');
+            printSpans.forEach(span => {
+                span.style.display = 'block';
+            });
+
+            // Apply specific print styles to labels in the cloned offer section
+            const labelsInClone = clonedPage.querySelectorAll('.offer-section .input-group label, .input-group label');
+            labelsInClone.forEach(label => {
+                label.style.width = '45%';
+                label.style.textAlign = 'left';
+                label.style.fontWeight = '600';
+                label.style.color = '#000';
+                label.style.fontSize = '0.9rem';
+            });
+
+
+            // Append the cloned page to the off-screen print container
+            printContainer.innerHTML = ''; // Clear previous content
+            printContainer.appendChild(clonedPage);
+
+            try {
+                const canvas = await html2canvas(printContainer, { scale: 1.5, useCORS: true, logging: true, backgroundColor: '#ffffff' });
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210;
+                const pageHeight = 297;
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                pdf.save('Presupuesto_Servicios.pdf');
+            } catch (error) {
+                console.error("Error generating PDF for budget report:", error);
+                showCustomMessage("Error al generar el PDF del presupuesto: " + error.message);
+            } finally {
+                // Clean up: remove the cloned page from the print container
+                if (clonedPage.parentNode === printContainer) {
+                    printContainer.removeChild(clonedPage);
+                }
+                showMainCalculatorPage(); // Return to main calculator view
+            }
         }
         window.printBudgetReport = printBudgetReport;
 
@@ -1978,8 +2289,6 @@
                 projectId: "calculadora-de-servicios-9d144",
                 // 👇 Paste your Firebase 'storageBucket' here, **between the quotes**.
                 storageBucket: "calculadora-de-servicios-9d144.firebasestorage.app",
-                // 👇 Paste your Firebase 'messagingSenderId' here, **between the quotes**.
-                messagingSenderId: "782870922497",
                 // 👇 Paste your Firebase 'appId' here, **between the quotes**.
                 appId: "1:782870922497:web:10b36c6ad335728f944700",
                 measurementId: "G-2M7V4M3BSL" // If you have 'measurementId', paste it here too, **between the quotes**.
