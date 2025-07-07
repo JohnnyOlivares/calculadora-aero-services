@@ -241,7 +241,7 @@
             font-size: 1rem;
         }
         .budget-table tbody tr:last-child td {
-            border-bottom: 1px solid #e2e8f0; /* Ensure last row still has bottom border */
+            border-bottom: none; /* Ensure last row still has bottom border */
         }
         .budget-table .total-row td {
             background-color: #e0f2fe; /* Light blue for total row */
@@ -613,11 +613,11 @@
             display: none !important;
         }
 
+        /* Print-only headers styling for both budget and delay reports */
         #print-container .print-only-budget-header,
         #print-container .print-only-header {
-            display: flex !important; /* Show print-only headers */
-            justify-content: space-between;
-            align-items: flex-start;
+            display: block !important; /* Show print-only headers as block */
+            text-align: center; /* Center content */
             margin-bottom: 1rem;
             padding-bottom: 0.75rem;
             border-bottom: 2px solid #2c5282;
@@ -625,8 +625,9 @@
         }
         #print-container .print-only-budget-header .header-left,
         #print-container .print-only-header .header-left {
-            flex-basis: 30%;
-            text-align: left;
+            display: inline-block; /* Allow logo to be inline-block for centering */
+            vertical-align: middle; /* Align with text */
+            margin-right: 1rem;
         }
         #print-container .print-only-budget-header .header-left img,
         #print-container .print-only-header .header-left img {
@@ -635,8 +636,9 @@
         }
         #print-container .print-only-budget-header .header-right,
         #print-container .print-only-header .header-right {
-            flex-basis: 65%;
-            text-align: right;
+            display: inline-block; /* Allow text to be inline-block for centering */
+            vertical-align: middle; /* Align with logo */
+            text-align: right; /* Align text within its own block */
         }
         #print-container .print-only-budget-header h1,
         #print-container .print-only-header h1 {
@@ -669,16 +671,17 @@
             color: #000 !important;
             margin-bottom: 0.4rem;
         }
+        /* Crucial: Ensure labels and spans are inline-flex for horizontal alignment */
         #print-container .input-group {
-            display: flex;
+            display: flex !important; /* Use flexbox for horizontal alignment */
             flex-wrap: nowrap;
-            justify-content: space-between;
+            justify-content: space-between; /* Space between label and value */
             align-items: baseline;
             margin-bottom: 0.2rem;
         }
         #print-container .input-group label {
             flex: 0 0 auto;
-            width: 45%;
+            width: auto; /* Let label take its natural width */
             margin-right: 0.5rem;
             text-align: left;
             font-weight: 600;
@@ -697,15 +700,16 @@
         #print-container #newPricePerHectareWithDelay,
         #print-container #delayDaysCount
         {
-            flex: 0 0 auto;
-            width: 50%;
+            flex: 1; /* Allow span to take remaining space */
             text-align: right;
             color: #000 !important;
             display: block !important; /* Show the span for printing */
             font-size: 0.9rem;
+            font-weight: 500; /* Ensure consistent font weight for values */
         }
 
         #print-container .budget-table {
+            width: 100%; /* Ensure table takes full width */
             background-color: white !important;
             box-shadow: none !important;
             border: 1px solid #e2e8f0 !important;
@@ -788,17 +792,35 @@
             print-color-adjust: exact;
             border: 1px solid #e2e8f0 !important;
             color: #000 !important;
+            padding: 0.75rem 1rem !important; /* Adjusted padding for results box */
+        }
+        #print-container #delayCalculationResults p {
+            margin-bottom: 0.2rem; /* Reduce space between paragraphs in results */
+            font-size: 0.9rem; /* Adjust font size */
         }
         #print-container #delayCalculationResults span {
             background-color: transparent !important;
             color: #000 !important; /* Ensure black for delay results values */
+            font-weight: 700 !important; /* Ensure bold for values */
         }
         #print-container #delayCalculationResults strong {
             color: #000 !important;
         }
         #print-container #delayCalculationResults .text-sm {
             color: #000 !important;
+            font-size: 0.8rem !important; /* Smaller font for note */
+            margin-top: 0.5rem !important; /* Add some margin */
         }
+        #print-container #delayCalculationSection h3 {
+            font-size: 1.2rem !important; /* Adjust section title font size */
+            font-weight: 700 !important;
+            margin-bottom: 0.8rem !important;
+            color: #000 !important;
+            text-align: center !important;
+            padding-bottom: 0.4rem !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+
 
         /* Standard browser print styles (still useful for direct browser printing) */
         @media print {
@@ -820,23 +842,24 @@
                 display: none !important;
             }
             .print-only-budget-header, .print-only-header {
-                display: flex !important;
-                justify-content: space-between;
-                align-items: flex-start;
+                display: block !important;
+                text-align: center;
                 margin-bottom: 1rem;
                 padding-bottom: 0.75rem;
                 border-bottom: 2px solid #2c5282;
             }
             .print-only-budget-header .header-left, .print-only-header .header-left {
-                flex-basis: 30%;
-                text-align: left;
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 1rem;
             }
             .print-only-budget-header .header-left img, .print-only-header .header-left img {
                 height: 70px;
                 width: auto;
             }
             .print-only-budget-header .header-right, .print-only-header .header-right {
-                flex-basis: 65%;
+                display: inline-block;
+                vertical-align: middle;
                 text-align: right;
             }
             .print-only-budget-header h1, .print-only-header h1 {
@@ -867,7 +890,7 @@
                 margin-bottom: 0.4rem;
             }
             .input-group {
-                display: flex;
+                display: flex !important;
                 flex-wrap: nowrap;
                 justify-content: space-between;
                 align-items: baseline;
@@ -875,7 +898,7 @@
             }
             .input-group label {
                 flex: 0 0 auto;
-                width: 45%;
+                width: auto;
                 margin-right: 0.5rem;
                 text-align: left;
                 font-weight: 600;
@@ -888,12 +911,12 @@
             .input-group span[id^="print"],
             #delayClientName, #delayClientId, #delayServiceDate, #delayEstimatedPaymentDate, #delayOriginalAmountDue,
             #calculatedDelayMonths, #additionalInterestAmount, #newTotalWithDelay, #newPricePerHectareWithDelay, #delayDaysCount {
-                flex: 0 0 auto;
-                width: 50%;
+                flex: 1;
                 text-align: right;
                 color: #000 !important;
                 display: block !important; /* Show the span for printing */
                 font-size: 0.9rem;
+                font-weight: 500;
             }
 
             .budget-table {
@@ -977,16 +1000,33 @@
                 print-color-adjust: exact;
                 border: 1px solid #e2e8f0 !important;
                 color: #000 !important;
+                padding: 0.75rem 1rem !important;
+            }
+            #delayCalculationResults p {
+                margin-bottom: 0.2rem;
+                font-size: 0.9rem;
             }
             #delayCalculationResults span {
                 background-color: transparent !important;
                 color: #000 !important;
+                font-weight: 700 !important;
             }
             #delayCalculationResults strong {
                 color: #000 !important;
             }
             #delayCalculationResults .text-sm {
                 color: #000 !important;
+                font-size: 0.8rem !important;
+                margin-top: 0.5rem !important;
+            }
+            #delayCalculationSection h3 {
+                font-size: 1.2rem !important;
+                font-weight: 700 !important;
+                margin-bottom: 0.8rem !important;
+                color: #000 !important;
+                text-align: center !important;
+                padding-bottom: 0.4rem !important;
+                border-bottom: 1px solid #e2e8f0 !important;
             }
 
             @page {
@@ -1009,11 +1049,11 @@
 
         <div class="w-full max-w-md">
             <div class="mb-4">
-                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico:</label>
+                <label for="email">Correo Electrónico:</label>
                 <input type="email" id="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="tu@ejemplo.com">
             </div>
             <div class="mb-6">
-                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Contraseña:</label>
+                <label for="password">Contraseña:</label>
                 <input type="password" id="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="********">
             </div>
             <div id="auth-error-message" class="text-red-500 text-sm mb-4" style="display: none;"></div>
@@ -1981,7 +2021,7 @@
             // Apply specific print styles to labels in the cloned offer section
             const labelsInClone = clonedPage.querySelectorAll('.offer-section .input-group label, .input-group label');
             labelsInClone.forEach(label => {
-                label.style.width = '45%';
+                label.style.width = 'auto'; /* Let label take its natural width */
                 label.style.textAlign = 'left';
                 label.style.fontWeight = '600';
                 label.style.color = '#000';
@@ -2271,7 +2311,7 @@
             // const userFirebaseConfig = {
             //     apiKey: "AIzaSyC...",
             //     authDomain: "your-project.firebaseapp.com",
-            //     projectId: "your-project",
+            //     projectId: "your-project.com",
             //     storageBucket: "your-project.appspot.com",
             //     messagingSenderId: "1234567890",
             //     appId: "1:234567890:web:abcdef123456",
@@ -2289,6 +2329,8 @@
                 projectId: "calculadora-de-servicios-9d144",
                 // 👇 Paste your Firebase 'storageBucket' here, **between the quotes**.
                 storageBucket: "calculadora-de-servicios-9d144.firebasestorage.app",
+                // 👇 Paste your Firebase 'messagingSenderId' here, **between the quotes**.
+                messagingSenderId: "782870922497",
                 // 👇 Paste your Firebase 'appId' here, **between the quotes**.
                 appId: "1:782870922497:web:10b36c6ad335728f944700",
                 measurementId: "G-2M7V4M3BSL" // If you have 'measurementId', paste it here too, **between the quotes**.
