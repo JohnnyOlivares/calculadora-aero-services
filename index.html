@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Precios - AERO SERVICES Venezuela</title>
+    <title>Calculadora de Precios - Aero Services Venezuela, C.A.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Importación de jsPDF y html2canvas para una mejor generación de PDF -->
@@ -513,10 +513,17 @@
             margin-top: 1.5rem;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        #delayCalculationSection .print-button:hover {
-            background-color: #2f855a;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        .delay-note-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.9rem;
+            color: #000;
+            margin-bottom: 0.2rem;
+        }
+        .delay-note-line span {
+            font-weight: 500;
+            text-align: right;
         }
 
         /* Custom Modal Styles */
@@ -694,11 +701,11 @@
         #print-container #delayServiceDate,
         #print-container #delayEstimatedPaymentDate,
         #print-container #delayOriginalAmountDue,
+        #print-container #delayActualPaymentDate, /* Added for print */
         #print-container #calculatedDelayMonths,
         #print-container #additionalInterestAmount,
         #print-container #newTotalWithDelay,
-        #print-container #newPricePerHectareWithDelay,
-        #print-container #delayDaysCount
+        #print-container #newPricePerHectareWithDelay
         {
             flex: 1; /* Allow span to take remaining space */
             text-align: right;
@@ -707,6 +714,22 @@
             font-size: 0.9rem;
             font-weight: 500; /* Ensure consistent font weight for values */
         }
+        /* Specific style for the delay note to ensure it's a single line */
+        #print-container #delayNoteText {
+            display: block !important; /* Ensure it's a block for its own line */
+            font-size: 0.8rem !important; /* Smaller font for note */
+            margin-top: 0.5rem !important; /* Add some margin */
+            color: #000 !important;
+            text-align: left !important; /* Align note text to the left */
+        }
+        #print-container #delayDaysValueDisplay {
+            display: block !important; /* Ensure it's a block for its own line */
+            font-size: 0.9rem !important; /* Font size for the days value */
+            text-align: right !important; /* Align days value to the right */
+            font-weight: 700 !important; /* Keep bold for the number */
+            margin-top: 0.2rem !important; /* Small margin above it */
+        }
+
 
         #print-container .budget-table {
             width: 100%; /* Ensure table takes full width */
@@ -724,7 +747,7 @@
             font-size: 0.9rem;
         }
         #print-container .budget-table th {
-            background-color: #f0f4f8 !important;
+            background-color: white !important; /* Changed to white for print */
         }
         #print-container .budget-table .total-row td {
             background-color: #e0f2fe !important;
@@ -805,11 +828,6 @@
         }
         #print-container #delayCalculationResults strong {
             color: #000 !important;
-        }
-        #print-container #delayCalculationResults .text-sm {
-            color: #000 !important;
-            font-size: 0.8rem !important; /* Smaller font for note */
-            margin-top: 0.5rem !important; /* Add some margin */
         }
         #print-container #delayCalculationSection h3 {
             font-size: 1.2rem !important; /* Adjust section title font size */
@@ -910,13 +928,29 @@
             }
             .input-group span[id^="print"],
             #delayClientName, #delayClientId, #delayServiceDate, #delayEstimatedPaymentDate, #delayOriginalAmountDue,
-            #calculatedDelayMonths, #additionalInterestAmount, #newTotalWithDelay, #newPricePerHectareWithDelay, #delayDaysCount {
+            #delayActualPaymentDate, /* Added for print */
+            #calculatedDelayMonths, #additionalInterestAmount, #newTotalWithDelay, #newPricePerHectareWithDelay {
                 flex: 1;
                 text-align: right;
                 color: #000 !important;
                 display: block !important; /* Show the span for printing */
                 font-size: 0.9rem;
                 font-weight: 500;
+            }
+            /* Specific style for the delay note to ensure it's a single line */
+            #delayNoteText {
+                display: block !important; /* Ensure it's a block for its own line */
+                font-size: 0.8rem !important; /* Smaller font for note */
+                margin-top: 0.5rem !important; /* Add some margin */
+                color: #000 !important;
+                text-align: left !important; /* Align note text to the left */
+            }
+            #delayDaysValueDisplay {
+                display: block !important; /* Ensure it's a block for its own line */
+                font-size: 0.9rem !important; /* Font size for the days value */
+                text-align: right !important; /* Align days value to the right */
+                font-weight: 700 !important; /* Keep bold for the number */
+                margin-top: 0.2rem !important; /* Small margin above it */
             }
 
             .budget-table {
@@ -933,7 +967,7 @@
                 font-size: 0.9rem;
             }
             .budget-table th {
-                background-color: #f0f4f8 !important;
+                background-color: white !important; /* Changed to white for print */
             }
             .budget-table .total-row td {
                 background-color: #e0f2fe !important;
@@ -1014,11 +1048,6 @@
             #delayCalculationResults strong {
                 color: #000 !important;
             }
-            #delayCalculationResults .text-sm {
-                color: #000 !important;
-                font-size: 0.8rem !important;
-                margin-top: 0.5rem !important;
-            }
             #delayCalculationSection h3 {
                 font-size: 1.2rem !important;
                 font-weight: 700 !important;
@@ -1039,10 +1068,10 @@
 <body>
     <!-- Login/Register Page -->
     <div id="auth-page" class="container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh;">
-        <h2 class="section-title">AERO SERVICES Venezuela</h2>
+        <h2 class="section-title">Aero Services Venezuela, C.A.</h2>
         <div class="logo-section mb-8">
             <div class="logo">
-                <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="AERO SERVICES Logo">
+                <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="Aero Services Logo">
             </div>
         </div>
         <h3 class="text-2xl font-bold text-gray-800 mb-6">Iniciar Sesión o Registrarse</h3>
@@ -1113,9 +1142,9 @@
     <div id="main-calculator-page" class="container" style="display: none;">
         <header class="header">
             <div class="logo-section">
-                <!-- Logo de AERO SERVICES Venezuela -->
+                <!-- Logo de Aero Services Venezuela, C.A. -->
                 <div class="logo">
-                    <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="AERO SERVICES Logo">
+                    <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="Aero Services Logo">
                 </div>
                 <!-- Se elimina el nombre de la empresa y el RIF -->
                 <div class="company-info">
@@ -1131,7 +1160,7 @@
         <!-- New Print-Only Header for Budget -->
         <div class="print-only-budget-header" style="display: none;">
             <div class="header-left">
-                <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="AERO SERVICES Logo">
+                <img src="https://i.postimg.cc/rw84Gd2y/230823-LOGO-ACTUALIZADO-ASEVENCA-jroc.png" alt="Aero Services Logo">
             </div>
             <div class="header-right">
                 <h1>Presupuesto de Servicios Aéreos con Drone</h1>
@@ -1144,7 +1173,7 @@
 
         <!-- New Offer Section -->
         <div class="offer-section">
-            <p>Por medio del presente, <strong>AERO SERVICES Venezuela</strong> hace entrega de la oferta de servicios de fumigación con las siguientes condiciones:</p>
+            <p>Por medio del presente, <strong>Aero Services Venezuela, C.A.</strong> hace entrega de la oferta de servicios de fumigación con las siguientes condiciones:</p>
             <div class="input-group">
                 <label for="clientName">Nombre del Cliente:</label>
                 <input type="text" id="clientName" placeholder="Ingrese nombre del cliente">
@@ -1245,7 +1274,7 @@
                 <p>No fumigamos</p>
                 <p><strong>Gestionamos Calidad!</strong></p>
             </div>
-            <p>&copy; 2025 AERO SERVICES Venezuela. Todos los derechos reservados.</p>
+            <p>&copy; 2025 Aero Services Venezuela, C.A.. Todos los derechos reservados.</p>
             <p id="userIdDisplay" class="text-sm text-gray-400 mt-2"></p>
         </footer>
     </div>
@@ -1262,7 +1291,7 @@
             <div class="print-only-header" style="display: none;">
                 <div style="text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #2c5282;">
                     <h1 style="font-size: 1.8rem; font-weight: 700; color: #2c5282; margin-bottom: 0.5rem;">Reporte de Cálculo de Retraso de Pago</h1>
-                    <p style="font-size: 1rem; color: #4a5568;">AERO SERVICES Venezuela</p>
+                    <p style="font-size: 1rem; color: #4a5568;">Aero Services Venezuela, C.A.</p>
                     <p style="font-size: 0.9rem; color: #666;">Fecha de Emisión: <span id="reportIssueDatePrint"></span></p>
                 </div>
             </div>
@@ -1288,16 +1317,17 @@
                 <span id="delayOriginalAmountDue"></span>
             </div>
             <div class="input-group">
-                <label for="actualPaymentDate">Fecha Real de Pago:</label>
-                <input type="date" id="actualPaymentDate" onchange="calculateDelayInterest()">
+                <label>Fecha Real de Pago:</label>
+                <span id="delayActualPaymentDate"></span> <!-- Added span for display -->
             </div>
             <div id="delayCalculationResults" class="result-box" style="display: none;">
                 <p>Meses de Retraso Calculados: <span id="calculatedDelayMonths"></span></p>
                 <p>Interés Adicional por Retraso: <span id="additionalInterestAmount"></span></p>
                 <p><strong>Nuevo Monto Total Adeudado con Retraso: <span id="newTotalWithDelay"></span></strong></p>
                 <p><strong>Costo por Hectárea con Retraso (Total): <span id="newPricePerHectareWithDelay"></span></strong></p>
-                <!-- Updated note with dynamic days -->
-                <p class="text-sm mt-2" id="delayNote">Nota: Se está efectuando un cálculo por retraso de <span id="delayDaysCount"></span> días desde la fecha convenida de pago inicialmente al financiamiento.</p>
+                <!-- Updated note with dynamic days and new layout -->
+                <p id="delayNoteText" class="text-sm mt-2">Nota: Se está efectuando un cálculo por retraso de días desde la fecha convenida de pago inicialmente al financiamiento.</p>
+                <p class="text-sm text-right font-bold" id="delayDaysValueDisplay"><span id="delayDaysCount"></span></p>
             </div>
             <div class="action-buttons mt-4">
                 <button onclick="printDelayReport()" id="printReportButton" style="display: none;">Imprimir Reporte</button>
@@ -1834,7 +1864,7 @@
                     // Show the delay calculation section
                     document.getElementById('delayCalculationSection').style.display = 'block';
                     document.getElementById('delayCalculationResults').style.display = 'none'; // Hide results until calculated
-                    document.getElementById('actualPaymentDate').value = ''; // Clear previous date
+                    // document.getElementById('actualPaymentDate').value = ''; // Clear previous date - this is now handled by the modal input
                     document.getElementById('printReportButton').style.display = 'none'; // Hide print button initially
 
                     // Scroll to the delay calculation section
@@ -1843,6 +1873,8 @@
                     // Prompt for actual payment date
                     showCustomMessageWithInput("Por favor, introduce la fecha real de pago para calcular el retraso:", "date", (actualPaymentDate) => {
                         if (actualPaymentDate) {
+                            // Update the display span for actual payment date
+                            document.getElementById('delayActualPaymentDate').textContent = formatDateToDDMMYYYY(actualPaymentDate);
                             // Now that we have the actual payment date, calculate and display
                             calculateDelayInterest(actualPaymentDate);
                         } else {
@@ -1895,7 +1927,7 @@
                 newPricePerHectare = overallTotalCostWithDelay / currentSelectedService.hectares;
             }
 
-            document.getElementById('actualPaymentDate').value = actualPaymentDateStr; // Set the input field
+            document.getElementById('delayActualPaymentDate').textContent = formatDateToDDMMYYYY(actualPaymentDateStr); // Set the display span
             document.getElementById('calculatedDelayMonths').textContent = delayMonths.toFixed(2);
             document.getElementById('additionalInterestAmount').textContent = formatCurrency(additionalInterest);
             document.getElementById('newTotalWithDelay').textContent = formatCurrency(newTotalDueWithDelay);
@@ -1944,7 +1976,7 @@
             printContainer.appendChild(clonedSection);
 
             try {
-                const canvas = await html2canvas(printContainer, { scale: 1.5, useCORS: true, logging: true, backgroundColor: '#ffffff' });
+                const canvas = await html2canvas(printContainer, { scale: 1.5, useCORS: true, logging: true, backgroundColor: '#ffffff' }); // Reverted scale to 1.5
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
                 const imgWidth = 210;
@@ -2034,7 +2066,7 @@
             printContainer.appendChild(clonedPage);
 
             try {
-                const canvas = await html2canvas(printContainer, { scale: 1.5, useCORS: true, logging: true, backgroundColor: '#ffffff' });
+                const canvas = await html2canvas(printContainer, { scale: 1.5, useCORS: true, logging: true, backgroundColor: '#ffffff' }); // Reverted scale to 1.5
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
                 const imgWidth = 210;
@@ -2094,7 +2126,7 @@
         let onInputCallback = null; // New callback for input modal
 
         function showConfirmModal(message, onConfirm) {
-            document.getElementById('modalTitle').textContent = "Confirmar Acción"; // Default title for confirmation
+            document.getElementById('modalTitle').textContent = "Confirmar Eliminación"; // Default title for confirmation
             document.getElementById('modalMessage').textContent = message;
             onConfirmCallback = onConfirm;
             document.getElementById('modalConfirmBtn').style.display = 'inline-block'; // Show confirm button
